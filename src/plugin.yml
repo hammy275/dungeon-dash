@@ -1,0 +1,5 @@
+name: DungeonDash
+version: 0.1.0
+author: hammy3502
+main: net.blf02.dungeondash.DungeonDash
+api-version: 1.16.5
