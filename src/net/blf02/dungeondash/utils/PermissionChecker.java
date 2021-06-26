@@ -8,6 +8,7 @@ public class PermissionChecker {
     public static final String allPermission = "dungeondash.any";
     public static final String joinGamePermission = "dungeondash.join";
     public static final String createMapPermission = "dungeondash.create";
+    public static final String leaveGamePermission = "dungeondash.leave";
 
     public static boolean hasPermission(CommandSender sender, String[] args) {
         if (sender instanceof Player && args.length >= 1) {
@@ -20,6 +21,8 @@ public class PermissionChecker {
             } else if (args[0].equals("play") && !player.hasPermission(joinGamePermission)) {
                 return false;
             } else if (args[0].equals("create") && !player.hasPermission(createMapPermission)) {
+                return false;
+            } else if (args[0].equals("leave") && !player.hasPermission(leaveGamePermission)) {
                 return false;
             }
             return true;

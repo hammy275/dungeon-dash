@@ -5,7 +5,6 @@ import net.blf02.dungeondash.commands.MainExecutor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.libs.org.eclipse.sisu.Nullable;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 

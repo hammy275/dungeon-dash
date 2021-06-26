@@ -2,6 +2,7 @@ package net.blf02.dungeondash.commands;
 
 import net.blf02.dungeondash.DungeonDash;
 import net.blf02.dungeondash.game.DDMap;
+import net.blf02.dungeondash.game.PlayerState;
 import net.blf02.dungeondash.utils.PermissionChecker;
 import net.blf02.dungeondash.utils.Tracker;
 import org.bukkit.command.Command;
@@ -47,8 +48,10 @@ public class MainExecutor implements CommandExecutor {
             DDMap map = Tracker.getMap(mapName);
             if (map == null) {
                 sendMessage(sender, "That map dos not exist!");
+            } else {
+                player.teleport(map.start);
+                Tracker.playStatus.put(player.getDisplayName(), new PlayerState(map, player));
             }
-            player.teleport(map.start);
         } else {
             sendMessage(sender, "You cannot join a game unless you are a player!");
         }
@@ -69,10 +72,26 @@ public class MainExecutor implements CommandExecutor {
     }
 
     public static void sendMessage(@Nullable CommandSender sender, String[] messages) {
+        if (sender == null) return;
         String[] prefixedMessages = new String[messages.length];
         for (int i = 0; i < messages.length; i++) {
             prefixedMessages[i] = chatTag + messages[i];
         }
         sender.sendMessage(prefixedMessages);
+    }
+
+    public static void sendMessage(@Nullable Player player, String message) {
+        if (player != null) {
+            player.sendMessage(chatTag + message);
+        }
+    }
+
+    public static void sendMessage(@Nullable Player player, String[] messages) {
+        if (player == null) return;
+        String[] prefixedMessages = new String[messages.length];
+        for (int i = 0; i < messages.length; i++) {
+            prefixedMessages[i] = chatTag + messages[i];
+        }
+        player.sendMessage(prefixedMessages);
     }
 }

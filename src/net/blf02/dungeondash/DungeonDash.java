@@ -1,6 +1,7 @@
 package net.blf02.dungeondash;
 
 import net.blf02.dungeondash.commands.MainExecutor;
+import net.blf02.dungeondash.event.ConstantTick;
 import net.blf02.dungeondash.game.DDMap;
 import net.blf02.dungeondash.utils.Tracker;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,7 +21,7 @@ public class DungeonDash extends JavaPlugin {
     @Override
     public void onEnable() {
         super.onEnable();
-        // Master command to handle everything
+        // Set serverDir and mapsDir
         serverDir = this.getServer().getWorldContainer().getAbsolutePath();
         this.getCommand("ddash").setExecutor(new MainExecutor());
         Path mapsDirPath = Paths.get(serverDir, "dungeondash_maps");
@@ -28,6 +29,7 @@ public class DungeonDash extends JavaPlugin {
         if (!mapsDir.endsWith("/")) {
             mapsDir += "/";
         }
+        // Load all of the maps for DungeonDash
         File mapsDir = mapsDirPath.toFile();
         if (!mapsDir.exists()) {
             if (mapsDir.mkdirs()) {
@@ -54,10 +56,16 @@ public class DungeonDash extends JavaPlugin {
                 }
             }
         }
+
+        // Function to run every tick
+        this.getServer().getScheduler().runTaskTimer(this, ConstantTick::handleEveryTick, 0, 1);
     }
 
     @Override
     public void onDisable() {
         super.onDisable();
+        Tracker.playStatus.clear();
+        Tracker.maps.clear();
+        Tracker.creationStatus.clear();
     }
 }

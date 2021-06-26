@@ -28,10 +28,11 @@ public class CreateHandler {
         } else if (Tracker.creationStatus.get(player.getDisplayName()) == null) {
             if (Tracker.getMap(args[1]) != null) {
                 MainExecutor.sendMessage(sender, "That map already exists!");
+            } else {
+                Tracker.creationStatus.put(player.getDisplayName(),
+                        new DDMap(args[1], null, null, null));
+                sender.sendMessage("Created map with name '" + args[1] + "'! Type `/ddash create spawn` to set the spawnpoint for this map, or `/ddash create cancel` to cancel creation!");
             }
-            Tracker.creationStatus.put(player.getDisplayName(),
-                    new DDMap(args[1], null, null, null));
-            sender.sendMessage("Created map with name '" + args[1] + "'! Type `/ddash create spawn` to set the spawnpoint for this map, or `/ddash create cancel` to cancel creation!");
         } else if (args[1].equals("spawn")) {
             DDMap old = Tracker.creationStatus.get(player.getDisplayName());
             Tracker.creationStatus.put(player.getDisplayName(),
@@ -57,7 +58,8 @@ public class CreateHandler {
                 Tracker.maps.add(map);
                 Tracker.creationStatus.remove(player.getDisplayName());
             }
+        } else {
+            MainExecutor.sendMessage(sender, "Invalid subcommand! Type /ddash create help for help!");
         }
-        MainExecutor.sendMessage(sender, "Invalid subcommand! Type /ddash create help for help!");
     }
 }
