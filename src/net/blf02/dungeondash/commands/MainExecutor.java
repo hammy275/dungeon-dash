@@ -119,7 +119,15 @@ public class MainExecutor implements CommandExecutor {
     }
 
     public void help(CommandSender sender) {
-        sendMessage(sender, "TODO!");
+        sendMessage(sender, new String[]{
+                "/ddash help - View this help command.",
+                "/ddash version - View the version of DungeonDash this server is using.",
+                "/ddash play (Map Name) - Play the specified map name",
+                "/ddash create - DungeonDash map creator. Type /ddash create help for information on using it.",
+                "/ddash leave - Leave a game or lobby of DungeonDash.",
+                "/ddash list - List all available DungeonDash maps.",
+                "/ddash remove - Remove a DungeonDash map."
+        });
     }
 
     public static void sendMessage(@Nullable CommandSender sender, String message) {
