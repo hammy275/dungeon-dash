@@ -1,10 +1,12 @@
 package net.blf02.dungeondash.game;
 
 import net.blf02.dungeondash.DungeonDash;
-import net.blf02.dungeondash.commands.MainExecutor;
+import net.blf02.dungeondash.utils.Tracker;
+import net.blf02.dungeondash.utils.Util;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.libs.org.eclipse.sisu.Nullable;
+import org.bukkit.entity.Player;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 
@@ -24,6 +26,10 @@ public class DDMap implements Serializable {
     public final Location endCorner1;
     public final Location endCorner2;
 
+    public boolean respawnsKill = false;
+    public boolean voidRespawns = false;
+    public boolean waterRespawns = false;
+
     public boolean isFullMap;
 
     public DDMap(String mapDisplayName, Location start, Location end1, Location end2) {
@@ -33,6 +39,16 @@ public class DDMap implements Serializable {
         this.endCorner2 = end2;
         this.isFullMap = mapDisplayName != null && start != null &&
                 end1 != null && end2 != null;
+    }
+
+    public void attemptRespawn(Player player) {
+        if (respawnsKill) {
+            Tracker.playStatus.get(player.getDisplayName()).triggerDeath();
+        } else {
+            player.setFallDistance(0);
+            player.teleport(this.start);
+            player.setFallDistance(0);
+        }
     }
 
     public boolean saveMap(@Nullable CommandSender sender) {
@@ -45,7 +61,7 @@ public class DDMap implements Serializable {
             return true;
         } catch (IOException e) {
             e.printStackTrace();
-            MainExecutor.sendMessage(sender, "Failed to save map data! Maybe try setting the second corner again?");
+            Util.sendMessage(sender, "Failed to save map data! Maybe try setting the second corner again?");
             return false;
         }
     }

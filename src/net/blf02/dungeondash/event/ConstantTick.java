@@ -1,12 +1,10 @@
 package net.blf02.dungeondash.event;
 
-import net.blf02.dungeondash.commands.MainExecutor;
 import net.blf02.dungeondash.config.Config;
 import net.blf02.dungeondash.game.PlayerState;
 import net.blf02.dungeondash.utils.Tracker;
+import org.bukkit.Material;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 public class ConstantTick {
@@ -16,21 +14,22 @@ public class ConstantTick {
     }
 
     public static void handlePlayersPlaying() {
-        List<String> toRemove = new ArrayList<>();
         for (Map.Entry<String, PlayerState> entry : Tracker.playStatus.entrySet()) {
             entry.getValue().noStillCheck();
             if (entry.getValue().isInEndingZone()) {
-                toRemove.add(entry.getKey());
-                MainExecutor.sendMessage(entry.getValue().player, "You win!");
-                entry.getValue().player.teleport(entry.getValue().locationBeforePlaying);
+                entry.getValue().triggerVictory();
             } else if (entry.getValue().ticksStill >= Config.ticksStillUntilDeath) {
-                toRemove.add(entry.getKey());
-                MainExecutor.sendMessage(entry.getValue().player, "You lose!");
-                entry.getValue().player.teleport(entry.getValue().locationBeforePlaying);
+                entry.getValue().triggerDeath();
+            } else if (entry.getValue().player.getLocation().getY() < 0 && entry.getValue().map.voidRespawns) {
+                entry.getValue().map.attemptRespawn(entry.getValue().player);
+            } else if (entry.getValue().player.getLocation().getBlock().getType() == Material.WATER
+                    && entry.getValue().map.waterRespawns) {
+                entry.getValue().map.attemptRespawn(entry.getValue().player);
             }
         }
-        for (String s : toRemove) {
+        for (String s : Tracker.playStatusesToRemove) {
             Tracker.playStatus.remove(s);
         }
+        Tracker.playStatusesToRemove.clear();
     }
 }

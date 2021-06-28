@@ -17,6 +17,9 @@ public class Tracker {
     // Tracks each player's "playing a game" status.
     public static final Map<String, PlayerState> playStatus = new HashMap<>();
 
+    // All player display names in here will be removed from playStatus ASAP
+    public static List<String> playStatusesToRemove = new ArrayList<>();
+
     // Get Map by name.
     public static DDMap getMap(String mapName) {
         for (DDMap m : maps) {

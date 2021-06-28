@@ -2,10 +2,9 @@ package net.blf02.dungeondash.commands;
 
 import net.blf02.dungeondash.game.DDMap;
 import net.blf02.dungeondash.utils.Tracker;
+import net.blf02.dungeondash.utils.Util;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.io.IOException;
 
 public class CreateHandler {
 
@@ -15,19 +14,24 @@ public class CreateHandler {
             "/ddash create spawn: Run after creating a map to set the starting point for players.",
             "/ddash create end1: Run after the above command to set the first corner of the ending zone.",
             "/ddash create end2: Run after the above command to set the second corner for the ending zone.",
+            "/ddash create void_respawn: Enables/disables the void respawning players. Defaults to false.",
+            "/ddash create water_respawn: Enables/disables water respawning players. Defaults to false.",
+            "/ddash create respawns_kill: Enables/disables respawns killing the player instead. Defaults to false.",
+            "/ddash create save: Saves the map to disk, and makes it available to players to play.",
             "/ddash create cancel: Run during any point of the creation process to cancel creation."
     };
 
     public static void handleCreateCommand(CommandSender sender, String[] args) {
         if (!(sender instanceof Player)) {
-            MainExecutor.sendMessage(sender, "Only execute create commands as a player!");
+            Util.sendMessage(sender, "Only execute create commands as a player!");
+            return;
         }
         Player player = (Player) sender;
         if (args[1].equals("help")) {
-            MainExecutor.sendMessage(sender, helpMsg);
+            Util.sendMessage(sender, helpMsg);
         } else if (Tracker.creationStatus.get(player.getDisplayName()) == null) {
             if (Tracker.getMap(args[1]) != null) {
-                MainExecutor.sendMessage(sender, "That map already exists!");
+                Util.sendMessage(sender, "That map already exists!");
             } else {
                 Tracker.creationStatus.put(player.getDisplayName(),
                         new DDMap(args[1], null, null, null));
@@ -47,7 +51,8 @@ public class CreateHandler {
             DDMap old = Tracker.creationStatus.get(player.getDisplayName());
             Tracker.creationStatus.put(player.getDisplayName(),
                     new DDMap(old.mapDisplayName, old.start, old.endCorner1, player.getLocation()));
-            sender.sendMessage("Set second corner of the map successfully! Saving map...");
+            sender.sendMessage("Set second corner of the map successfully!");
+        } else if (args[1].equals("save")) {
             DDMap map = Tracker.creationStatus.get(player.getDisplayName());
             if (!map.isFullMap) {
                 sender.sendMessage("Error: Map is missing all properties! Did you perform the steps out of order?");
@@ -58,8 +63,33 @@ public class CreateHandler {
                 Tracker.maps.add(map);
                 Tracker.creationStatus.remove(player.getDisplayName());
             }
-        } else {
-            MainExecutor.sendMessage(sender, "Invalid subcommand! Type /ddash create help for help!");
+        } else if (args[1].equals("void_respawns") || args[1].equals("void_respawn")) {
+            DDMap map = Tracker.creationStatus.get(player.getDisplayName());
+            map.voidRespawns = !map.voidRespawns;
+            if (map.voidRespawns) {
+                Util.sendMessage(sender, "Players entering the void now respawn!");
+            } else {
+                Util.sendMessage(sender, "Players entering the void no longer respawn!");
+            }
+        } else if (args[1].equals("water_respawns") || args[1].equals("water_respawn")) {
+            DDMap map = Tracker.creationStatus.get(player.getDisplayName());
+            map.waterRespawns = !map.waterRespawns;
+            if (map.waterRespawns) {
+                Util.sendMessage(sender, "Players entering water now respawn!");
+            } else {
+                Util.sendMessage(sender, "Players entering water no longer respawn!");
+            }
+        } else if (args[1].equals("respawns_kill") || args[1].equals("respawn_kill") || args[1].equals("respawn_kills")) {
+            DDMap map = Tracker.creationStatus.get(player.getDisplayName());
+            map.respawnsKill = !map.respawnsKill;
+            if (map.respawnsKill) {
+                Util.sendMessage(sender, "Players are now killed instead of respawning!");
+            } else {
+                Util.sendMessage(sender, "Players now respawn normally!");
+            }
+        }
+        else {
+            Util.sendMessage(sender, "Invalid subcommand! Type /ddash create help for help!");
         }
     }
 }
