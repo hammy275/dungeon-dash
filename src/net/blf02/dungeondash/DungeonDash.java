@@ -2,6 +2,7 @@ package net.blf02.dungeondash;
 
 import net.blf02.dungeondash.commands.MainExecutor;
 import net.blf02.dungeondash.event.ConstantTick;
+import net.blf02.dungeondash.event.EventHandler;
 import net.blf02.dungeondash.game.DDMap;
 import net.blf02.dungeondash.utils.Tracker;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -59,6 +60,7 @@ public class DungeonDash extends JavaPlugin {
 
         // Function to run every tick
         this.getServer().getScheduler().runTaskTimer(this, ConstantTick::handleEveryTick, 0, 1);
+        this.getServer().getPluginManager().registerEvents(new EventHandler(), this);
     }
 
     @Override

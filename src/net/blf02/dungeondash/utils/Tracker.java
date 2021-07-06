@@ -2,6 +2,7 @@ package net.blf02.dungeondash.utils;
 
 
 import net.blf02.dungeondash.game.DDMap;
+import net.blf02.dungeondash.game.Lobby;
 import net.blf02.dungeondash.game.PlayerState;
 
 import java.util.*;
@@ -19,6 +20,9 @@ public class Tracker {
 
     // All player display names in here will be removed from playStatus ASAP
     public static List<String> playStatusesToRemove = new ArrayList<>();
+
+    // Maps can have respective lobbies
+    public static final Map<DDMap, Lobby> lobbies = new HashMap<>();
 
     // Get Map by name.
     public static DDMap getMap(String mapName) {

@@ -41,14 +41,20 @@ public class DDMap implements Serializable {
                 end1 != null && end2 != null;
     }
 
-    public void attemptRespawn(Player player) {
-        if (respawnsKill) {
+    public void doRespawn(Player player, boolean forceRespawn) {
+        player.setHealth(20);
+        player.setFireTicks(0);
+        if (respawnsKill && !forceRespawn) {
             Tracker.playStatus.get(player.getDisplayName()).triggerDeath();
         } else {
             player.setFallDistance(0);
             player.teleport(this.start);
             player.setFallDistance(0);
         }
+    }
+
+    public void attemptRespawn(Player player) {
+        doRespawn(player, false);
     }
 
     public boolean saveMap(@Nullable CommandSender sender) {
@@ -80,7 +86,7 @@ public class DDMap implements Serializable {
 
     @Override
     public int hashCode() {
-        // No two maps share the same hash code, so we're safe to use the hash from the map name.
+        // No two maps share the same name, so we're safe to use the hash from the map name.
         return this.mapDisplayName.hashCode();
     }
 }

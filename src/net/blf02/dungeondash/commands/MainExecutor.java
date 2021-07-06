@@ -2,6 +2,7 @@ package net.blf02.dungeondash.commands;
 
 import net.blf02.dungeondash.DungeonDash;
 import net.blf02.dungeondash.game.DDMap;
+import net.blf02.dungeondash.game.Lobby;
 import net.blf02.dungeondash.game.PlayerState;
 import net.blf02.dungeondash.utils.PermissionChecker;
 import net.blf02.dungeondash.utils.Tracker;
@@ -88,8 +89,7 @@ public class MainExecutor implements CommandExecutor {
             if (state == null) {
                 Util.sendMessage(sender, "You aren't in a game right now!");
             } else {
-                player.teleport(state.locationBeforePlaying);
-                Tracker.playStatus.remove(player.getDisplayName());
+                state.leaveGame();
                 Util.sendMessage(sender, "You left the game!");
             }
         } else {
@@ -104,8 +104,19 @@ public class MainExecutor implements CommandExecutor {
             if (map == null) {
                 Util.sendMessage(sender, "That map dos not exist!");
             } else {
-                Tracker.playStatus.put(player.getDisplayName(), new PlayerState(map, player));
+                Lobby lobby = Tracker.lobbies.get(map);
+                if (lobby == null) {
+                    lobby = new Lobby();
+                    Tracker.lobbies.put(map, lobby);
+                } else if (lobby.gameStarted) {
+                    Util.sendMessage(sender, "That map's game has already started!");
+                    return;
+                }
+                PlayerState state = new PlayerState(map, player, lobby);
+                Tracker.playStatus.put(player.getDisplayName(), state);
                 player.teleport(map.start);
+                lobby.playerStates.add(state);
+                Util.sendMessage(player, "You have entered the lobby! Feel free to practice, the game will begin shortly!");
             }
         } else {
             Util.sendMessage(sender, "You cannot join a game unless you are a player!");

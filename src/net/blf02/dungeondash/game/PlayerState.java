@@ -11,32 +11,53 @@ public class PlayerState {
     public DDMap map;
     public Location locationBeforePlaying;
     public Player player;
-    public boolean inLobby = false; // Lobby goes unused, so TODO: implement a lobby system
+    public Lobby lobby;
+    public boolean inLobby = true;
     public Position lastPosition = new Position(0, -5, 0);
     public int ticksStill = 0;
 
     public final double stillDistance = 0.009;
 
-    public PlayerState(DDMap map, Player player) {
+    public PlayerState(DDMap map, Player player, Lobby lobby) {
         this.map = map;
         this.locationBeforePlaying = player.getLocation();
         this.player = player;
+        this.lobby = lobby;
+    }
+
+    public void leaveGame() {
+        Tracker.playStatusesToRemove.add(player.getDisplayName());
+        player.setFallDistance(0);
+        player.teleport(this.locationBeforePlaying);
+        player.setFallDistance(0);
+        PlayerState toRemove = null;
+        for (PlayerState s : this.lobby.playerStates) {
+            if (s.player.getDisplayName().equals(player.getDisplayName())) {
+                toRemove = s;
+                break;
+            }
+        }
+        if (toRemove != null) {
+            this.lobby.playerStates.remove(toRemove);
+        }
     }
 
     public void triggerDeath() {
-        player.setFallDistance(0);
-        player.teleport(this.locationBeforePlaying);
-        Util.sendMessage(player, "You lose!");
-        player.setFallDistance(0);
-        Tracker.playStatusesToRemove.add(player.getDisplayName());
+        if (inLobby) {
+            this.map.doRespawn(player, true);
+        } else {
+            Util.sendMessage(player, "You lose!");
+            leaveGame();
+        }
     }
 
     public void triggerVictory() {
-        Tracker.playStatusesToRemove.add(this.player.getDisplayName());
-        Util.sendMessage(this.player, "You win!");
-        this.player.setFallDistance(0);
-        this.player.teleport(this.locationBeforePlaying);
-        this.player.setFallDistance(0);
+        if (inLobby) {
+            this.map.doRespawn(player, true);
+        } else {
+            Util.sendMessage(this.player, "You win!");
+            leaveGame();
+        }
     }
 
     public void noStillCheck() {
@@ -53,25 +74,22 @@ public class PlayerState {
     }
 
     public boolean isInEndingZone() {
-        if (!inLobby) {
-            boolean xIn;
-            boolean zIn;
-            if (map.endCorner1.getX() < map.endCorner2.getX()) {
-                xIn = player.getLocation().getX() >= map.endCorner1.getX() &&
-                        player.getLocation().getX() <= map.endCorner2.getX();
-            } else {
-                xIn = player.getLocation().getX() >= map.endCorner2.getX() &&
-                        player.getLocation().getX() <= map.endCorner1.getX();
-            }
-            if (map.endCorner1.getZ() < map.endCorner2.getZ()) {
-                zIn = player.getLocation().getZ() >= map.endCorner1.getZ() &&
-                        player.getLocation().getZ() <= map.endCorner2.getZ();
-            } else {
-                zIn = player.getLocation().getZ() >= map.endCorner2.getZ() &&
-                        player.getLocation().getZ() <= map.endCorner1.getZ();
-            }
-            return xIn && zIn;
+        boolean xIn;
+        boolean zIn;
+        if (map.endCorner1.getX() < map.endCorner2.getX()) {
+            xIn = player.getLocation().getX() >= map.endCorner1.getX() &&
+                    player.getLocation().getX() <= map.endCorner2.getX();
+        } else {
+            xIn = player.getLocation().getX() >= map.endCorner2.getX() &&
+                    player.getLocation().getX() <= map.endCorner1.getX();
         }
-        return false;
+        if (map.endCorner1.getZ() < map.endCorner2.getZ()) {
+            zIn = player.getLocation().getZ() >= map.endCorner1.getZ() &&
+                    player.getLocation().getZ() <= map.endCorner2.getZ();
+        } else {
+            zIn = player.getLocation().getZ() >= map.endCorner2.getZ() &&
+                    player.getLocation().getZ() <= map.endCorner1.getZ();
+        }
+        return xIn && zIn;
     }
 }
