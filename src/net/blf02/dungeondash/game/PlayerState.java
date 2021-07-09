@@ -42,7 +42,7 @@ public class PlayerState {
         }
     }
 
-    public void triggerDeath() {
+    public void triggerLoss() {
         if (inLobby) {
             this.map.doRespawn(player, true);
         } else {

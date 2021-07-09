@@ -29,6 +29,7 @@ public class DDMap implements Serializable {
     public boolean respawnsKill = false;
     public boolean voidRespawns = false;
     public boolean waterRespawns = false;
+    public transient boolean hasChaser = true;
 
     public boolean isFullMap;
 
@@ -45,7 +46,7 @@ public class DDMap implements Serializable {
         player.setHealth(20);
         player.setFireTicks(0);
         if (respawnsKill && !forceRespawn) {
-            Tracker.playStatus.get(player.getDisplayName()).triggerDeath();
+            Tracker.playStatus.get(player.getDisplayName()).triggerLoss();
         } else {
             player.setFallDistance(0);
             player.teleport(this.start);
@@ -77,6 +78,7 @@ public class DDMap implements Serializable {
             BukkitObjectInputStream in = new BukkitObjectInputStream(
                     new GZIPInputStream(new FileInputStream(path)));
             DDMap map = (DDMap) in.readObject();
+            map.hasChaser = true;
             in.close();
             return map;
         } catch (ClassNotFoundException | IOException e) {

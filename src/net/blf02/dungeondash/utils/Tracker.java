@@ -24,6 +24,9 @@ public class Tracker {
     // Maps can have respective lobbies
     public static final Map<DDMap, Lobby> lobbies = new HashMap<>();
 
+    // Lobbies to remove
+    public static final List<DDMap> lobbiesToRemove = new LinkedList<>();
+
     // Get Map by name.
     public static DDMap getMap(String mapName) {
         for (DDMap m : maps) {
