@@ -6,8 +6,9 @@ import net.blf02.dungeondash.game.Lobby;
 import net.blf02.dungeondash.game.PlayerState;
 import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;
+import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.EnderDragon;
+import org.bukkit.entity.ArmorStand;
 
 import java.util.Map;
 
@@ -16,6 +17,7 @@ public class ConstantTick {
     public static void handleEveryTick() {
         handlePlayersPlaying();
         tickLobbies();
+        tickLobbyChasers();
     }
 
     public static void handlePlayersPlaying() {
@@ -48,6 +50,7 @@ public class ConstantTick {
     public static void tickLobbies() {
         for (Map.Entry<DDMap, Lobby> entry : Tracker.lobbies.entrySet()) {
             Lobby lobby = entry.getValue();
+            lobby.resetRankings(); // Could be very laggy, set to only happen once a second at some point!
             if (lobby.ticksUntilStart >= -201 && !lobby.playerStates.isEmpty()) {
                 lobby.ticksUntilStart--;
             }
@@ -74,16 +77,32 @@ public class ConstantTick {
             } else if (lobby.ticksUntilStart == -200 && lobby.gameStarted && entry.getKey().hasChaser) {
                 lobby.chaser = Util.spawnChaser(entry.getKey().start);
             }
-
-            // Ender Dragon AI
-            if (lobby.chaser != null) {
-                lobby.chaser.setPhase(EnderDragon.Phase.CHARGE_PLAYER);
-
-            }
         }
         for (DDMap map : Tracker.lobbiesToRemove) {
             Tracker.lobbies.remove(map);
         }
         Tracker.lobbiesToRemove.clear();
+    }
+
+    public static void tickLobbyChasers() {
+        for (Map.Entry<DDMap, Lobby> entry : Tracker.lobbies.entrySet()) {
+            ArmorStand chaser = entry.getValue().chaser;
+            if (chaser == null) return;
+            if (chaser.getTicksLived() % Config.ticksBetweenMove != 0) return;
+            chaser.setInvisible(false); // TODO: Comment this out at some point and add in particles lol
+            PlayerState target = entry.getValue().positionsLastToFirst.peek();
+            if (target != null) {
+                Location destination = chaser.getLocation().setDirection(
+                        target.player.getLocation().subtract(chaser.getLocation()).toVector());
+                destination = destination.add(Config.distanceToMove * destination.getDirection().getX(),
+                        Config.distanceToMove * destination.getDirection().getY(),
+                        Config.distanceToMove * destination.getDirection().getZ());
+                chaser.teleport(destination);
+                if (chaser.getLocation().distance(target.player.getLocation()) <= 2) {
+                    target.triggerLoss();
+                    entry.getValue().resetRankings(); // Prevents targeting dead players
+                }
+            }
+        }
     }
 }

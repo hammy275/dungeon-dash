@@ -1,13 +1,12 @@
 package net.blf02.dungeondash.utils;
 
 import net.blf02.dungeondash.commands.MainExecutor;
-import org.bukkit.GameRule;
 import org.bukkit.Location;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeInstance;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.libs.org.eclipse.sisu.Nullable;
-import org.bukkit.entity.*;
+import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 
 import java.util.Objects;
 
@@ -42,17 +41,14 @@ public class Util {
         player.sendMessage(prefixedMessages);
     }
 
-    public static EnderDragon spawnChaser(Location location) {
+    public static ArmorStand spawnChaser(Location location) {
         Objects.requireNonNull(location.getWorld());
-        EnderDragon enderDragon = (EnderDragon) location.getWorld().spawn(location, EntityType.ENDER_DRAGON.getEntityClass());
-        enderDragon.setInvulnerable(true);
-        enderDragon.setGravity(false);
-        AttributeInstance a = enderDragon.getAttribute(Attribute.GENERIC_FOLLOW_RANGE);
-        if (a != null) {
-            a.setBaseValue(256);
-        }
-        // Prevent EDragon from destroying blocks
-        enderDragon.getWorld().setGameRule(GameRule.MOB_GRIEFING, false);
-        return enderDragon;
+        ArmorStand armorStand = (ArmorStand) location.getWorld().spawn(location, EntityType.ARMOR_STAND.getEntityClass());
+        armorStand.setInvulnerable(true);
+        armorStand.setInvisible(true);
+        armorStand.setMarker(true);
+        armorStand.setGravity(false);
+        armorStand.setMarker(true);
+        return armorStand;
     }
 }

@@ -1,12 +1,13 @@
 package net.blf02.dungeondash.game;
 
+import net.blf02.dungeondash.config.Config;
 import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;
 import net.minecraft.server.v1_16_R3.Position;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class PlayerState {
+public class PlayerState implements Comparable {
 
     public DDMap map;
     public Location locationBeforePlaying;
@@ -15,8 +16,6 @@ public class PlayerState {
     public boolean inLobby = true;
     public Position lastPosition = new Position(0, -5, 0);
     public int ticksStill = 0;
-
-    public final double stillDistance = 0.009;
 
     public PlayerState(DDMap map, Player player, Lobby lobby) {
         this.map = map;
@@ -64,9 +63,9 @@ public class PlayerState {
         if (!inLobby) {
             Location loc = player.getLocation();
             Position newPos = new Position(loc.getX(), loc.getY(), loc.getZ());
-            if (Math.abs(newPos.getX() - lastPosition.getX()) < stillDistance &&
-                    Math.abs(newPos.getY() - lastPosition.getY()) < stillDistance &&
-                    Math.abs(newPos.getZ() - lastPosition.getZ()) < stillDistance) {
+            if (Math.abs(newPos.getX() - lastPosition.getX()) < Config.stillDistance &&
+                    Math.abs(newPos.getY() - lastPosition.getY()) < Config.stillDistance &&
+                    Math.abs(newPos.getZ() - lastPosition.getZ()) < Config.stillDistance) {
                 ticksStill++;
             }
             this.lastPosition = newPos;
@@ -91,5 +90,18 @@ public class PlayerState {
                     player.getLocation().getZ() <= map.endCorner1.getZ();
         }
         return xIn && zIn;
+    }
+
+    @Override
+    public int compareTo(Object o) {
+        if (o == null) {
+            throw new NullPointerException("Cannot compare PlayerState to null-value!");
+        } else if (!(o instanceof PlayerState)) {
+            throw new UnsupportedOperationException("Cannot compare PlayerState to non-PlayerState!");
+        } else {
+            PlayerState p = (PlayerState) o;
+            Location center = this.map.getCenterOfEnd();
+            return (int) ((this.player.getLocation().distance(center) - p.player.getLocation().distance(center)) * -1000);
+        }
     }
 }

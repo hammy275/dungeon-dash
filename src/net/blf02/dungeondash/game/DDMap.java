@@ -42,6 +42,14 @@ public class DDMap implements Serializable {
                 end1 != null && end2 != null;
     }
 
+    public Location getCenterOfEnd() {
+        return new Location(this.endCorner1.getWorld(),
+                (Math.abs(this.endCorner1.getX()) + Math.abs(this.endCorner2.getX())) / 2.0,
+                (Math.abs(this.endCorner1.getY()) + Math.abs(this.endCorner2.getY())) / 2.0,
+                (Math.abs(this.endCorner1.getZ()) + Math.abs(this.endCorner2.getZ())) / 2.0,
+                0, 0);
+    }
+
     public void doRespawn(Player player, boolean forceRespawn) {
         player.setHealth(20);
         player.setFireTicks(0);
