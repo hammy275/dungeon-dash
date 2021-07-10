@@ -8,6 +8,7 @@ import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
 
 import java.util.Map;
@@ -89,7 +90,9 @@ public class ConstantTick {
             ArmorStand chaser = entry.getValue().chaser;
             if (chaser == null) return;
             if (chaser.getTicksLived() % Config.ticksBetweenMove != 0) return;
-            chaser.setInvisible(false); // TODO: Comment this out at some point and add in particles lol
+            if (chaser.getTicksLived() % 5 == 0)
+                chaser.getWorld().spawnParticle(Particle.SMOKE_NORMAL,
+                        chaser.getLocation(), 32, 0.5, 0.5, 0.5);
             PlayerState target = entry.getValue().positionsLastToFirst.peek();
             if (target != null) {
                 Location destination = chaser.getLocation().setDirection(
