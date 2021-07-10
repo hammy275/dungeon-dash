@@ -29,9 +29,10 @@ public class DDMap implements Serializable {
     public boolean respawnsKill = false;
     public boolean voidRespawns = false;
     public boolean waterRespawns = false;
-    public transient boolean hasChaser = true;
+    public boolean hasChaser = true;
+    public int mapVersion = 1;
 
-    public boolean isFullMap;
+    public transient boolean isFullMap;
 
     public DDMap(String mapDisplayName, Location start, Location end1, Location end2) {
         this.mapDisplayName = mapDisplayName;

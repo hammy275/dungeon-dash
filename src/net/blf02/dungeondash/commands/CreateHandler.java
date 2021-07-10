@@ -17,6 +17,7 @@ public class CreateHandler {
             "/ddash create void_respawn: Enables/disables the void respawning players. Defaults to false.",
             "/ddash create water_respawn: Enables/disables water respawning players. Defaults to false.",
             "/ddash create respawns_kill: Enables/disables respawns killing the player instead. Defaults to false.",
+            "/ddash create use_chaser: Enables/disables the chaser. If not enabled, first to finish wins! Defaults to true.",
             "/ddash create save: Saves the map to disk, and makes it available to players to play.",
             "/ddash create cancel: Run during any point of the creation process to cancel creation."
     };
@@ -86,6 +87,14 @@ public class CreateHandler {
                 Util.sendMessage(sender, "Players are now killed instead of respawning!");
             } else {
                 Util.sendMessage(sender, "Players now respawn normally!");
+            }
+        } else if (args[1].equals("use_chaser")) {
+            DDMap map = Tracker.creationStatus.get(player.getDisplayName());
+            map.hasChaser = !map.hasChaser;
+            if (map.hasChaser) {
+                Util.sendMessage(sender, "Players are now chased throughout the map!");
+            } else {
+                Util.sendMessage(sender, "Players are no longer chased! First to finish wins!");
             }
         }
         else {

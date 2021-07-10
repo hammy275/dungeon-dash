@@ -27,9 +27,9 @@ public class ConstantTick {
             if (entry.getValue().isInEndingZone()) {
                 // Win!
                 entry.getValue().triggerVictory();
-                // If someone wins, and there's a chaser, lose everyone else.
+                // If someone wins, and there's not a chaser, lose everyone else.
                 Lobby lobby = Tracker.lobbies.get(entry.getValue().map);
-                if (lobby != null && entry.getValue().map.hasChaser) {
+                if (lobby != null && !entry.getValue().map.hasChaser) {
                     lobby.cleanLobby();
                 }
             } else if (entry.getValue().ticksStill >= Config.ticksStillUntilDeath) {
