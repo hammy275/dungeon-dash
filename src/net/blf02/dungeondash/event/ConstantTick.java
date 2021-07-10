@@ -36,10 +36,10 @@ public class ConstantTick {
                 entry.getValue().triggerLoss();
                 entry.getValue().ticksStill = 0;
             } else if (entry.getValue().player.getLocation().getY() < 0 && entry.getValue().map.voidRespawns) {
-                entry.getValue().map.attemptRespawn(entry.getValue().player);
+                entry.getValue().attemptRespawn(entry.getValue().player);
             } else if (entry.getValue().player.getLocation().getBlock().getType() == Material.WATER
                     && entry.getValue().map.waterRespawns) {
-                entry.getValue().map.attemptRespawn(entry.getValue().player);
+                entry.getValue().attemptRespawn(entry.getValue().player);
             }
         }
         for (String s : Tracker.playStatusesToRemove) {
@@ -67,6 +67,7 @@ public class ConstantTick {
                     p.player.teleport(entry.getKey().start);
                     p.player.setFallDistance(0);
                     p.inLobby = false;
+                    p.player.setHealth(20);
                 }
             } else if (lobby.ticksUntilStart % 20 == 0 && !lobby.gameStarted) {
                 int secsUntilStart = lobby.ticksUntilStart / 20;
@@ -92,7 +93,7 @@ public class ConstantTick {
             if (chaser.getTicksLived() % Config.ticksBetweenMove != 0) return;
             if (chaser.getTicksLived() % 5 == 0)
                 chaser.getWorld().spawnParticle(Particle.SMOKE_NORMAL,
-                        chaser.getLocation(), 32, 0.5, 0.5, 0.5);
+                        chaser.getLocation(), 32, 0.5, 0.5, 0.5, 0.01);
             PlayerState target = entry.getValue().positionsLastToFirst.peek();
             if (target != null) {
                 Location destination = chaser.getLocation().setDirection(

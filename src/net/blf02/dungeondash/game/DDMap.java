@@ -50,22 +50,6 @@ public class DDMap implements Serializable {
                 0, 0);
     }
 
-    public void doRespawn(Player player, boolean forceRespawn) {
-        player.setHealth(20);
-        player.setFireTicks(0);
-        if (respawnsKill && !forceRespawn) {
-            Tracker.playStatus.get(player.getDisplayName()).triggerLoss();
-        } else {
-            player.setFallDistance(0);
-            player.teleport(this.start);
-            player.setFallDistance(0);
-        }
-    }
-
-    public void attemptRespawn(Player player) {
-        doRespawn(player, false);
-    }
-
     public boolean saveMap(@Nullable CommandSender sender) {
         String filePath = DungeonDash.mapsDir + this.mapDisplayName + ".data";
         try {

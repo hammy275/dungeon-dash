@@ -16,12 +16,30 @@ public class PlayerState implements Comparable {
     public boolean inLobby = true;
     public Position lastPosition = new Position(0, -5, 0);
     public int ticksStill = 0;
+    public Location respawnPoint;
 
     public PlayerState(DDMap map, Player player, Lobby lobby) {
         this.map = map;
         this.locationBeforePlaying = player.getLocation();
         this.player = player;
         this.lobby = lobby;
+        this.respawnPoint = this.map.start;
+    }
+
+    public void doRespawn(Player player, boolean forceRespawn) {
+        player.setHealth(20);
+        player.setFireTicks(0);
+        if (this.map.respawnsKill && !forceRespawn) {
+            Tracker.playStatus.get(player.getDisplayName()).triggerLoss();
+        } else {
+            player.setFallDistance(0);
+            player.teleport(this.respawnPoint);
+            player.setFallDistance(0);
+        }
+    }
+
+    public void attemptRespawn(Player player) {
+        doRespawn(player, false);
     }
 
     public void leaveGame() {
@@ -43,7 +61,7 @@ public class PlayerState implements Comparable {
 
     public void triggerLoss() {
         if (inLobby) {
-            this.map.doRespawn(player, true);
+            this.doRespawn(player, true);
         } else {
             Util.sendMessage(player, "You lose!");
             leaveGame();
@@ -52,7 +70,7 @@ public class PlayerState implements Comparable {
 
     public void triggerVictory() {
         if (inLobby) {
-            this.map.doRespawn(player, true);
+            this.doRespawn(player, true);
         } else {
             Util.sendMessage(this.player, "You win!");
             leaveGame();
