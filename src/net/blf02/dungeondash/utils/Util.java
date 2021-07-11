@@ -1,13 +1,12 @@
 package net.blf02.dungeondash.utils;
 
-import net.blf02.dungeondash.commands.MainExecutor;
+import net.blf02.dungeondash.config.Constants;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.libs.org.eclipse.sisu.Nullable;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Player;
 
 import java.util.Objects;
 
@@ -51,7 +50,7 @@ public class Util {
         if (sender == null) return;
         String[] prefixedMessages = new String[messages.length];
         for (int i = 0; i < messages.length; i++) {
-            prefixedMessages[i] = MainExecutor.chatTag + processMessage(messages[i]);
+            prefixedMessages[i] = Constants.chatTag + processMessage(messages[i]);
         }
         sender.sendMessage(prefixedMessages);
     }

@@ -13,7 +13,6 @@ import java.nio.file.Paths;
 
 public class DungeonDash extends JavaPlugin {
 
-    public static final String VERSION = "0.1.0";
     // Ends in trailing /.
     public static String serverDir;
     // Ends in trailing /
@@ -66,8 +65,11 @@ public class DungeonDash extends JavaPlugin {
     @Override
     public void onDisable() {
         super.onDisable();
-        Tracker.playStatus.clear();
-        Tracker.maps.clear();
         Tracker.creationStatus.clear();
+        Tracker.maps.clear();
+        Tracker.playStatus.clear();
+        Tracker.playStatusesToRemove.clear();
+        Tracker.lobbies.clear();
+        Tracker.lobbiesToRemove.clear();
     }
 }

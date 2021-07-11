@@ -1,13 +1,13 @@
 package net.blf02.dungeondash.commands;
 
 import net.blf02.dungeondash.DungeonDash;
+import net.blf02.dungeondash.config.Constants;
 import net.blf02.dungeondash.game.DDMap;
 import net.blf02.dungeondash.game.Lobby;
 import net.blf02.dungeondash.game.PlayerState;
 import net.blf02.dungeondash.utils.PermissionChecker;
 import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;
-import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -16,9 +16,6 @@ import org.bukkit.entity.Player;
 import java.io.File;
 
 public class MainExecutor implements CommandExecutor {
-
-    public static final String chatTag = ChatColor.GRAY + "[" + ChatColor.RED + "Dungeon"
-        + ChatColor.BLUE + "Dash" + ChatColor.GRAY + "]" + ChatColor.RESET + " " ;
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String label, String[] args) {
@@ -126,7 +123,7 @@ public class MainExecutor implements CommandExecutor {
     }
 
     public void version(CommandSender sender) {
-        Util.sendMessage(sender, "Version " + DungeonDash.VERSION);
+        Util.sendMessage(sender, "Version " + Constants.VERSION);
     }
 
     public void help(CommandSender sender) {
