@@ -68,6 +68,7 @@ public class ConstantTick {
                     p.player.setFallDistance(0);
                     p.inLobby = false;
                     p.player.setHealth(20);
+                    Util.sendMessage(p.player, "Let the games begin!");
                 }
             } else if (lobby.ticksUntilStart % 20 == 0 && !lobby.gameStarted) {
                 int secsUntilStart = lobby.ticksUntilStart / 20;
@@ -78,6 +79,9 @@ public class ConstantTick {
                 }
             } else if (lobby.ticksUntilStart == -200 && lobby.gameStarted && entry.getKey().hasChaser) {
                 lobby.chaser = Util.spawnChaser(entry.getKey().start);
+                for (PlayerState p : lobby.playerStates) {
+                    Util.sendMessage(p.player, "The chaser has entered the map! Don't get caught in the smoke!");
+                }
             }
         }
         for (DDMap map : Tracker.lobbiesToRemove) {

@@ -7,6 +7,7 @@ import net.blf02.dungeondash.game.PlayerState;
 import net.blf02.dungeondash.utils.PermissionChecker;
 import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -16,7 +17,8 @@ import java.io.File;
 
 public class MainExecutor implements CommandExecutor {
 
-    public static final String chatTag = "[DungeonDash] ";
+    public static final String chatTag = ChatColor.GRAY + "[" + ChatColor.RED + "Dungeon"
+        + ChatColor.BLUE + "Dash" + ChatColor.GRAY + "]" + ChatColor.RESET + " " ;
 
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String label, String[] args) {
@@ -128,14 +130,15 @@ public class MainExecutor implements CommandExecutor {
     }
 
     public void help(CommandSender sender) {
+        // Yellow - Light Gray
         Util.sendMessage(sender, new String[]{
-                "/ddash help - View this help command.",
-                "/ddash version - View the version of DungeonDash this server is using.",
-                "/ddash play (Map Name) - Play the specified map name",
-                "/ddash create - DungeonDash map creator. Type /ddash create help for information on using it.",
-                "/ddash leave - Leave a game or lobby of DungeonDash.",
-                "/ddash list - List all available DungeonDash maps.",
-                "/ddash remove - Remove a DungeonDash map."
+                "`/ddash help` - View this help command.",
+                "`/ddash version` - View the version of DungeonDash this server is using.",
+                "`/ddash play` (Map Name) - Play the specified map name",
+                "`/ddash create` - DungeonDash map creator. Type /ddash create help for information on using it.",
+                "`/ddash leave` - Leave a game or lobby of DungeonDash.",
+                "`/ddash list` - List all available DungeonDash maps.",
+                "`/ddash remove` - Remove a DungeonDash map."
         });
     }
 
