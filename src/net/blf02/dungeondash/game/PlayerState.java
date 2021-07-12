@@ -4,6 +4,7 @@ import net.blf02.dungeondash.config.Config;
 import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;
 import net.minecraft.server.v1_16_R3.Position;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
@@ -64,6 +65,7 @@ public class PlayerState implements Comparable {
             this.doRespawn(player, true);
         } else {
             Util.sendMessage(player, "You lose!");
+            player.sendTitle(ChatColor.DARK_RED + "You lose!", null, 5, 50, 5);
             leaveGame();
         }
     }
@@ -73,6 +75,7 @@ public class PlayerState implements Comparable {
             this.doRespawn(player, true);
         } else {
             Util.sendMessage(this.player, "You win!");
+            player.sendTitle(ChatColor.GREEN + "You win!", null, 5, 50, 5);
             leaveGame();
         }
     }

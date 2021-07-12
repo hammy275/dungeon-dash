@@ -6,6 +6,7 @@ import net.blf02.dungeondash.game.Lobby;
 import net.blf02.dungeondash.game.PlayerState;
 import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -60,21 +61,35 @@ public class ConstantTick {
                 Tracker.lobbiesToRemove.add(entry.getKey());
                 continue;
             }
-            if (lobby.ticksUntilStart == 0 && !lobby.gameStarted) {
-                lobby.gameStarted = true;
+            if (lobby.ticksUntilStart > 0 && lobby.ticksUntilStart < 61) {
                 for (PlayerState p : lobby.playerStates) {
                     p.player.setFallDistance(0);
                     p.player.teleport(entry.getKey().start);
                     p.player.setFallDistance(0);
-                    p.inLobby = false;
                     p.player.setHealth(20);
+                }
+            }
+            if (lobby.ticksUntilStart == 0 && !lobby.gameStarted) {
+                lobby.gameStarted = true;
+                for (PlayerState p : lobby.playerStates) {
+                    p.inLobby = false;
                     Util.sendMessage(p.player, "Let the games begin!");
+                    p.player.sendTitle(ChatColor.GREEN + "Go!", null, 5, 20, 5);
                 }
             } else if (lobby.ticksUntilStart % 20 == 0 && !lobby.gameStarted) {
                 int secsUntilStart = lobby.ticksUntilStart / 20;
                 if (secsUntilStart <= 5 || secsUntilStart == 10 || secsUntilStart == 20) {
                     for (PlayerState p : lobby.playerStates) {
                         Util.sendMessage(p.player, secsUntilStart + " seconds until the game begins!");
+                    }
+                }
+                if (secsUntilStart <= 5) {
+                    for (PlayerState p : lobby.playerStates) {
+                        String colorPrefix = secsUntilStart == 3 ? String.valueOf(ChatColor.GREEN)
+                                : (secsUntilStart == 2 ? String.valueOf(ChatColor.YELLOW)
+                                : (secsUntilStart == 1 ? String.valueOf(ChatColor.RED)
+                                : String.valueOf(ChatColor.DARK_GREEN)));
+                        p.player.sendTitle(colorPrefix + secsUntilStart, null, 1, 60, 1);
                     }
                 }
             } else if (lobby.ticksUntilStart == -200 && lobby.gameStarted && entry.getKey().hasChaser) {
