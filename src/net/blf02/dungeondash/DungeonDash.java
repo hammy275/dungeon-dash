@@ -1,10 +1,12 @@
 package net.blf02.dungeondash;
 
 import net.blf02.dungeondash.commands.MainExecutor;
+import net.blf02.dungeondash.event.ConstantSecond;
 import net.blf02.dungeondash.event.ConstantTick;
 import net.blf02.dungeondash.event.EventHandler;
 import net.blf02.dungeondash.game.DDMap;
 import net.blf02.dungeondash.utils.Tracker;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -21,6 +23,10 @@ public class DungeonDash extends JavaPlugin {
     @Override
     public void onEnable() {
         super.onEnable();
+
+        // Setup scoreboards and such
+        Tracker.manager = Bukkit.getScoreboardManager();
+
         // Set serverDir and mapsDir
         serverDir = this.getServer().getWorldContainer().getAbsolutePath();
         this.getCommand("ddash").setExecutor(new MainExecutor());
@@ -59,6 +65,7 @@ public class DungeonDash extends JavaPlugin {
 
         // Function to run every tick
         this.getServer().getScheduler().runTaskTimer(this, ConstantTick::handleEveryTick, 0, 1);
+        this.getServer().getScheduler().runTaskTimer(this, ConstantSecond::handleEverySecond, 0, 20);
         this.getServer().getPluginManager().registerEvents(new EventHandler(), this);
     }
 

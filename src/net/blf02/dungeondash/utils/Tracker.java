@@ -4,10 +4,14 @@ package net.blf02.dungeondash.utils;
 import net.blf02.dungeondash.game.DDMap;
 import net.blf02.dungeondash.game.Lobby;
 import net.blf02.dungeondash.game.PlayerState;
+import org.bukkit.scoreboard.ScoreboardManager;
 
 import java.util.*;
 
 public class Tracker {
+
+    // Scoreboard
+    public static ScoreboardManager manager = null;
 
     // Tracks each player's "creating a map" status
     public static final Map<String, DDMap> creationStatus = new HashMap<>();

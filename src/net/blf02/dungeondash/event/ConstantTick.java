@@ -52,7 +52,6 @@ public class ConstantTick {
     public static void tickLobbies() {
         for (Map.Entry<DDMap, Lobby> entry : Tracker.lobbies.entrySet()) {
             Lobby lobby = entry.getValue();
-            lobby.resetRankings(); // Could be very laggy, set to only happen once a second at some point!
             if (lobby.ticksUntilStart >= -201 && !lobby.playerStates.isEmpty()) {
                 lobby.ticksUntilStart--;
             }

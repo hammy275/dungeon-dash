@@ -1,14 +1,18 @@
 package net.blf02.dungeondash.game;
 
 import net.blf02.dungeondash.config.Config;
+import net.blf02.dungeondash.config.Constants;
 import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;
 import net.minecraft.server.v1_16_R3.Position;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
 
-public class PlayerState implements Comparable {
+public class PlayerState implements Comparable<PlayerState> {
 
     public DDMap map;
     public Location locationBeforePlaying;
@@ -18,6 +22,10 @@ public class PlayerState implements Comparable {
     public Position lastPosition = new Position(0, -5, 0);
     public int ticksStill = 0;
     public Location respawnPoint;
+    public Scoreboard scoreboard = Tracker.manager.getNewScoreboard();
+    public Objective objective = scoreboard.getObjective("ddash_scoreboard") == null ?
+            scoreboard.registerNewObjective("ddash_scoreboard", "dummy", Constants.scoreboardTag)
+            : scoreboard.getObjective("ddash_scoreboard");
 
     public PlayerState(DDMap map, Player player, Lobby lobby) {
         this.map = map;
@@ -25,6 +33,10 @@ public class PlayerState implements Comparable {
         this.player = player;
         this.lobby = lobby;
         this.respawnPoint = this.map.start;
+
+        this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+
+        this.player.setScoreboard(scoreboard);
     }
 
     public void doRespawn(Player player, boolean forceRespawn) {
@@ -58,6 +70,8 @@ public class PlayerState implements Comparable {
         if (toRemove != null) {
             this.lobby.playerStates.remove(toRemove);
         }
+        // Clear scoreboard
+        player.setScoreboard(Tracker.manager.getNewScoreboard());
     }
 
     public void triggerLoss() {
@@ -113,14 +127,12 @@ public class PlayerState implements Comparable {
         return xIn && zIn;
     }
 
+
     @Override
-    public int compareTo(Object o) {
-        if (o == null) {
+    public int compareTo(PlayerState p) {
+        if (p == null) {
             throw new NullPointerException("Cannot compare PlayerState to null-value!");
-        } else if (!(o instanceof PlayerState)) {
-            throw new UnsupportedOperationException("Cannot compare PlayerState to non-PlayerState!");
         } else {
-            PlayerState p = (PlayerState) o;
             Location center = this.map.getCenterOfEnd();
             return (int) ((this.player.getLocation().distance(center) - p.player.getLocation().distance(center)) * -1000);
         }
