@@ -4,7 +4,6 @@ import net.blf02.dungeondash.config.Config;
 import net.blf02.dungeondash.config.Constants;
 import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;
-import net.minecraft.server.v1_16_R3.Position;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -19,7 +18,7 @@ public class PlayerState implements Comparable<PlayerState> {
     public Player player;
     public Lobby lobby;
     public boolean inLobby = true;
-    public Position lastPosition = new Position(0, -5, 0);
+    public Location lastPosition = new Location(null, 0, -5, 0);
     public int ticksStill = 0;
     public Location respawnPoint;
     public Scoreboard scoreboard = Tracker.manager.getNewScoreboard();
@@ -96,8 +95,7 @@ public class PlayerState implements Comparable<PlayerState> {
 
     public void noStillCheck() {
         if (!inLobby) {
-            Location loc = player.getLocation();
-            Position newPos = new Position(loc.getX(), loc.getY(), loc.getZ());
+            Location newPos = player.getLocation();
             if (Math.abs(newPos.getX() - lastPosition.getX()) < Config.stillDistance &&
                     Math.abs(newPos.getY() - lastPosition.getY()) < Config.stillDistance &&
                     Math.abs(newPos.getZ() - lastPosition.getZ()) < Config.stillDistance) {
