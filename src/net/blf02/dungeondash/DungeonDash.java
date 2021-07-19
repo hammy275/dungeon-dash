@@ -5,13 +5,17 @@ import net.blf02.dungeondash.event.ConstantSecond;
 import net.blf02.dungeondash.event.ConstantTick;
 import net.blf02.dungeondash.event.EventHandler;
 import net.blf02.dungeondash.game.DDMap;
+import net.blf02.dungeondash.game.PlayerState;
 import net.blf02.dungeondash.utils.Tracker;
+import net.blf02.dungeondash.utils.Util;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Map;
 
 public class DungeonDash extends JavaPlugin {
 
@@ -72,6 +76,12 @@ public class DungeonDash extends JavaPlugin {
     @Override
     public void onDisable() {
         super.onDisable();
+        for (Map.Entry<String, PlayerState> entry : Tracker.playStatus.entrySet()) {
+            Util.sendMessage(entry.getValue().player,
+                    ChatColor.RED + "The plugin is being disabled due to a server reload/restart/shutdown!" +
+                            " Kicking you from the game...");
+            entry.getValue().leaveGame();
+        }
         Tracker.creationStatus.clear();
         Tracker.maps.clear();
         Tracker.playStatus.clear();

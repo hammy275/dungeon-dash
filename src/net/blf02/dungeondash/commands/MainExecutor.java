@@ -102,6 +102,8 @@ public class MainExecutor implements CommandExecutor {
             DDMap map = Tracker.getMap(mapName);
             if (map == null) {
                 Util.sendMessage(sender, "That map dos not exist!");
+            } else if (Tracker.playStatus.get(player.getDisplayName()) != null) {
+              Util.sendMessage(sender, "You are already in a game or lobby! Use `/ddash leave` to leave!");
             } else {
                 Lobby lobby = Tracker.lobbies.get(map);
                 if (lobby == null) {
@@ -113,9 +115,7 @@ public class MainExecutor implements CommandExecutor {
                 }
                 PlayerState state = new PlayerState(map, player, lobby);
                 Tracker.playStatus.put(player.getDisplayName(), state);
-                player.teleport(map.start);
                 lobby.playerStates.add(state);
-                Util.sendMessage(player, "You have entered the lobby! Feel free to practice, the game will begin shortly!");
             }
         } else {
             Util.sendMessage(sender, "You cannot join a game unless you are a player!");

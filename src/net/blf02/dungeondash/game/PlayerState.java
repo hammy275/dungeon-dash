@@ -5,6 +5,7 @@ import net.blf02.dungeondash.config.Constants;
 import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.DisplaySlot;
@@ -14,7 +15,6 @@ import org.bukkit.scoreboard.Scoreboard;
 public class PlayerState implements Comparable<PlayerState> {
 
     public DDMap map;
-    public Location locationBeforePlaying;
     public Player player;
     public Lobby lobby;
     public boolean inLobby = true;
@@ -25,17 +25,29 @@ public class PlayerState implements Comparable<PlayerState> {
     public Objective objective = scoreboard.getObjective("ddash_scoreboard") == null ?
             scoreboard.registerNewObjective("ddash_scoreboard", "dummy", Constants.scoreboardTag)
             : scoreboard.getObjective("ddash_scoreboard");
+    public BeforeGameState beforeGameState;
 
     public PlayerState(DDMap map, Player player, Lobby lobby) {
         this.map = map;
-        this.locationBeforePlaying = player.getLocation();
         this.player = player;
         this.lobby = lobby;
         this.respawnPoint = this.map.start;
+        this.beforeGameState = new BeforeGameState(player);
 
         this.objective.setDisplaySlot(DisplaySlot.SIDEBAR);
 
         this.player.setScoreboard(scoreboard);
+
+        player.setFallDistance(0);
+        player.teleport(map.start);
+        player.setFallDistance(0);
+        Util.sendMessage(player,
+                "You have entered the lobby! Feel free to practice, the game will begin shortly!");
+        player.getInventory().clear();
+        player.setGameMode(GameMode.ADVENTURE);
+        player.setHealth(20);
+        player.setFoodLevel(20);
+        player.setSaturation(999999);
     }
 
     public void doRespawn(Player player, boolean forceRespawn) {
@@ -56,9 +68,7 @@ public class PlayerState implements Comparable<PlayerState> {
 
     public void leaveGame() {
         Tracker.playStatusesToRemove.add(player.getDisplayName());
-        player.setFallDistance(0);
-        player.teleport(this.locationBeforePlaying);
-        player.setFallDistance(0);
+        this.beforeGameState.restoreState();
         PlayerState toRemove = null;
         for (PlayerState s : this.lobby.playerStates) {
             if (s.player.getDisplayName().equals(player.getDisplayName())) {
@@ -128,6 +138,7 @@ public class PlayerState implements Comparable<PlayerState> {
 
     @Override
     public int compareTo(PlayerState p) {
+        // This compareTo evaluates such that this.compareTo(p) < 0 is true if this is FARTHER from the finish than p
         if (p == null) {
             throw new NullPointerException("Cannot compare PlayerState to null-value!");
         } else {

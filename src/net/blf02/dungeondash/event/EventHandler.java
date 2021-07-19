@@ -2,13 +2,13 @@ package net.blf02.dungeondash.event;
 
 import net.blf02.dungeondash.game.PlayerState;
 import net.blf02.dungeondash.utils.Tracker;
-import net.minecraft.server.v1_16_R3.Blocks;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerKickEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 public class EventHandler implements Listener {
 
@@ -34,5 +34,24 @@ public class EventHandler implements Listener {
             }
         }
     }
+
+    @org.bukkit.event.EventHandler
+    public void onLeave(PlayerQuitEvent event) {
+        // When DC'ing, make sure to remove player's status
+        PlayerState state = Tracker.playStatus.get(event.getPlayer().getDisplayName());
+        if (state != null) {
+            state.leaveGame();
+        }
+    }
+
+    @org.bukkit.event.EventHandler
+    public void onKick(PlayerKickEvent event) {
+        // When kicked, make sure to remove player's status
+        PlayerState state = Tracker.playStatus.get(event.getPlayer().getDisplayName());
+        if (state != null) {
+            state.leaveGame();
+        }
+    }
+
 }
 
