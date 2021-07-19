@@ -32,6 +32,10 @@ public class ConstantSecond {
                 if (p.inLobby) {
                     Score score = p.objective.getScore(ChatColor.GREEN + "In Lobby");
                     score.setScore(16);
+                    Score timeUntilStart = p.objective.getScore(ChatColor.AQUA + "Game will begin in...");
+                    timeUntilStart.setScore(15);
+                    Score startTime = p.objective.getScore(entry.getValue().ticksUntilStart / 20 + " seconds!");
+                    startTime.setScore(14);
                 } else {
                     int i = 16;
 

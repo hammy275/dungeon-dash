@@ -52,7 +52,7 @@ public class ConstantTick {
     public static void tickLobbies() {
         for (Map.Entry<DDMap, Lobby> entry : Tracker.lobbies.entrySet()) {
             Lobby lobby = entry.getValue();
-            if (lobby.ticksUntilStart >= -201 && !lobby.playerStates.isEmpty()) {
+            if (lobby.ticksUntilStart >= -101 && !lobby.playerStates.isEmpty()) {
                 lobby.ticksUntilStart--;
             }
             if (lobby.playerStates.isEmpty()) {
@@ -91,7 +91,7 @@ public class ConstantTick {
                         p.player.sendTitle(colorPrefix + secsUntilStart, null, 1, 60, 1);
                     }
                 }
-            } else if (lobby.ticksUntilStart == -200 && lobby.gameStarted && entry.getKey().hasChaser) {
+            } else if (lobby.ticksUntilStart == -100 && lobby.gameStarted && entry.getKey().hasChaser) {
                 lobby.chaser = Util.spawnChaser(entry.getKey().start);
                 for (PlayerState p : lobby.playerStates) {
                     Util.sendMessage(p.player, "The chaser has entered the map! Don't get caught in the smoke!");
