@@ -1,6 +1,7 @@
 package net.blf02.dungeondash.utils;
 
 
+import net.blf02.dungeondash.game.CreateState;
 import net.blf02.dungeondash.game.DDMap;
 import net.blf02.dungeondash.game.Lobby;
 import net.blf02.dungeondash.game.PlayerState;
@@ -14,7 +15,7 @@ public class Tracker {
     public static ScoreboardManager manager = null;
 
     // Tracks each player's "creating a map" status
-    public static final Map<String, DDMap> creationStatus = new HashMap<>();
+    public static final Map<String, CreateState> creationStatus = new HashMap<>();
 
     // List of all available maps
     public static final Set<DDMap> maps = new HashSet<>();

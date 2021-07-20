@@ -1,25 +1,26 @@
 package net.blf02.dungeondash.event;
 
 import net.blf02.dungeondash.config.Config;
+import net.blf02.dungeondash.game.CreateState;
 import net.blf02.dungeondash.game.DDMap;
 import net.blf02.dungeondash.game.Lobby;
 import net.blf02.dungeondash.game.PlayerState;
 import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Particle;
+import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
 
 import java.util.Map;
 
 public class ConstantTick {
 
+    public static final Particle.DustOptions endBorderColor = new Particle.DustOptions(Color.RED, 1);
+
     public static void handleEveryTick() {
         handlePlayersPlaying();
         tickLobbies();
         tickLobbyChasers();
+        handleCreateStates();
     }
 
     public static void handlePlayersPlaying() {
@@ -124,6 +125,33 @@ public class ConstantTick {
                     target.triggerLoss();
                     entry.getValue().resetRankings(); // Prevents targeting dead players
                 }
+            }
+        }
+    }
+
+    public static void handleCreateStates() {
+        for (Map.Entry<String, CreateState> entry : Tracker.creationStatus.entrySet()) {
+            CreateState state = entry.getValue();
+            if (state.map.start != null && state.map.start.distance(state.player.getLocation()) < 128) {
+                state.player.spawnParticle(Particle.REDSTONE, state.map.start.getX(),
+                        state.map.start.getY() + 1, state.map.start.getZ(), 1, 0.1, 0.4, 0.1,
+                        0.01, new Particle.DustOptions(Color.GREEN, 1));
+            }
+            if (state.map.endCorner1 != null && state.map.endCorner2 != null) {
+                double xCenter = (state.map.endCorner1.getX() + state.map.endCorner2.getX()) / 2;
+                double xDist = Math.abs(Math.abs(state.map.endCorner1.getX()) - Math.abs(state.map.endCorner2.getX()));
+                double yCenter = (state.map.endCorner1.getY() + state.map.endCorner2.getY()) / 2;
+                double zCenter = (state.map.endCorner1.getZ() + state.map.endCorner2.getZ()) / 2;
+                double zDist = Math.abs(Math.abs(state.map.endCorner1.getZ()) - Math.abs(state.map.endCorner2.getZ()));
+
+                state.player.spawnParticle(Particle.REDSTONE, xCenter, yCenter, state.map.endCorner1.getZ(),
+                        (int) xDist + 1, xDist / 8, 0, 0, endBorderColor);
+                state.player.spawnParticle(Particle.REDSTONE, xCenter, yCenter, state.map.endCorner2.getZ(),
+                        (int) xDist + 1, xDist / 8, 0, 0, endBorderColor);
+                state.player.spawnParticle(Particle.REDSTONE, state.map.endCorner1.getX(), yCenter, zCenter,
+                        (int) zDist + 1, 0, 0, zDist / 8, endBorderColor);
+                state.player.spawnParticle(Particle.REDSTONE, state.map.endCorner2.getX(), yCenter, zCenter,
+                        (int) zDist + 1, 0, 0, zDist / 8, endBorderColor);
             }
         }
     }
