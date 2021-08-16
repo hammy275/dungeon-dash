@@ -10,7 +10,6 @@ import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Server;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -93,5 +92,6 @@ public class DungeonDash extends JavaPlugin {
         Tracker.playStatusesToRemove.clear();
         Tracker.lobbies.clear();
         Tracker.lobbiesToRemove.clear();
+        Tracker.beforeGameStates.clear();
     }
 }

@@ -65,9 +65,11 @@ public class EventHandler implements Listener {
         if (state == null) {
             return;
         }
+        boolean doInventoryUpdate = true;
         String command;
         if (item == Material.LIME_DYE) {
             command = "ddash create spawn";
+            doInventoryUpdate = false;
         } else if (item == Material.RED_DYE) {
             command = "ddash create end" + state.currentCornerItem;
         } else if (item == Material.BEDROCK || meta.getDisplayName().contains("Void Respawns")) {
@@ -80,13 +82,17 @@ public class EventHandler implements Listener {
             command = "ddash create use_chaser";
         } else if (item == Material.COMMAND_BLOCK) {
             command = "ddash create save";
+            doInventoryUpdate = false;
         } else if (item == Material.BARRIER && meta.getDisplayName().contains("Cancel Map Creation")) {
             command = "ddash create cancel";
+            doInventoryUpdate = false;
         } else {
             return;
         }
         Bukkit.getServer().dispatchCommand(event.getPlayer(), command);
-        state.updateInventory();
+        if (doInventoryUpdate) {
+            state.updateInventory();
+        }
     }
 
 }

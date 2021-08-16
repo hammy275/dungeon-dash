@@ -1,10 +1,7 @@
 package net.blf02.dungeondash.utils;
 
 
-import net.blf02.dungeondash.game.CreateState;
-import net.blf02.dungeondash.game.DDMap;
-import net.blf02.dungeondash.game.Lobby;
-import net.blf02.dungeondash.game.PlayerState;
+import net.blf02.dungeondash.game.*;
 import org.bukkit.scoreboard.ScoreboardManager;
 
 import java.util.*;
@@ -31,6 +28,9 @@ public class Tracker {
 
     // Lobbies to remove
     public static final List<DDMap> lobbiesToRemove = new LinkedList<>();
+
+    // BeforeGameStates to re-apply (used to prevent a crash in EventHandler)
+    public static final Set<BeforeGameState> beforeGameStates = new LinkedHashSet<>();
 
     // Get Map by name.
     public static DDMap getMap(String mapName) {

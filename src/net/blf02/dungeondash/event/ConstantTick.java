@@ -1,10 +1,7 @@
 package net.blf02.dungeondash.event;
 
 import net.blf02.dungeondash.config.Config;
-import net.blf02.dungeondash.game.CreateState;
-import net.blf02.dungeondash.game.DDMap;
-import net.blf02.dungeondash.game.Lobby;
-import net.blf02.dungeondash.game.PlayerState;
+import net.blf02.dungeondash.game.*;
 import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;
 import org.bukkit.*;
@@ -21,6 +18,7 @@ public class ConstantTick {
         tickLobbies();
         tickLobbyChasers();
         handleCreateStates();
+        tickBeforeGameStates();
     }
 
     public static void handlePlayersPlaying() {
@@ -154,5 +152,12 @@ public class ConstantTick {
                         (int) zDist + 1, 0, 0, zDist / 8, endBorderColor);
             }
         }
+    }
+
+    public static void tickBeforeGameStates() {
+        for (BeforeGameState s : Tracker.beforeGameStates) {
+            s.restoreState();
+        }
+        Tracker.beforeGameStates.clear();
     }
 }

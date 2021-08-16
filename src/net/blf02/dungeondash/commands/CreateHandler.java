@@ -64,7 +64,7 @@ public class CreateHandler {
             if (res) {
                 Util.sendMessage(sender, "Map saved successfully!");
                 Tracker.maps.add(map);
-                state.beforeGameState.restoreState();
+                Tracker.beforeGameStates.add(state.beforeGameState);
                 Tracker.creationStatus.remove(player.getDisplayName());
             }
         } else if (args[1].equals("void_respawns") || args[1].equals("void_respawn")) {
@@ -106,7 +106,7 @@ public class CreateHandler {
         } else if (args[1].equals("cancel")) {
             CreateState state = Tracker.creationStatus.get(player.getDisplayName());
             if (Tracker.creationStatus.remove(player.getDisplayName()) != null) {
-                state.beforeGameState.restoreState();
+                Tracker.beforeGameStates.add(state.beforeGameState);
                 Util.sendMessage(sender, "Cancelled creation!");
             } else {
                 Util.sendMessage(sender, "Could not cancel creation process as one was not started!");
