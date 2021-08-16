@@ -10,6 +10,7 @@ import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Server;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -24,9 +25,13 @@ public class DungeonDash extends JavaPlugin {
     // Ends in trailing /
     public static String mapsDir;
 
+    public static DungeonDash instance;
+
     @Override
     public void onEnable() {
         super.onEnable();
+
+        instance = JavaPlugin.getPlugin(DungeonDash.class);
 
         // Setup scoreboards and such
         Tracker.manager = Bukkit.getScoreboardManager();

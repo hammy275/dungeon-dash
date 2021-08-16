@@ -25,6 +25,7 @@ public class Util {
 
         // Anything in `'s are commands and should be yellow
         int backQuotes = 0;
+        int equals = 0;
         for (int i = 0; i < message.length(); i++) {
             if (message.charAt(i) == '`') {
                 if (backQuotes % 2 == 0) {
@@ -33,6 +34,13 @@ public class Util {
                     toRet.append(ChatColor.GRAY);
                 }
                 backQuotes++;
+            } else if (message.charAt(i) == '=') {
+                if (equals % 2 == 0) {
+                    toRet.append(ChatColor.GREEN);
+                } else {
+                    toRet.append(ChatColor.GRAY);
+                }
+                equals++;
             } else {
                 toRet.append(message.charAt(i));
             }
