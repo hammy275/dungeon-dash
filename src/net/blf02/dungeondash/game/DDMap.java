@@ -6,7 +6,6 @@ import net.blf02.dungeondash.utils.Util;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.libs.org.eclipse.sisu.Nullable;
-import org.bukkit.entity.Player;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 
@@ -64,6 +63,12 @@ public class DDMap implements Serializable {
             Util.sendMessage(sender, "Failed to save map data! Maybe try setting the second corner again?");
             return false;
         }
+    }
+
+    public boolean saveMap(@Nullable CommandSender sender, DDMap oldMap) {
+        boolean res = saveMap(sender);
+        Tracker.maps.remove(oldMap);
+        return res;
     }
 
     public static DDMap loadMap(String path) {

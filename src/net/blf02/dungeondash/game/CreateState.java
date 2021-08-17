@@ -14,11 +14,13 @@ public class CreateState {
     public Player player;
     public BeforeGameState beforeGameState;
     public int currentCornerItem = 1;
+    public DDMap mapAtInitialRun;
 
-    public CreateState(Player player, DDMap map) {
+    public CreateState(Player player, DDMap map, DDMap mapAtInitialRun) {
         this.map = map;
         this.player = player;
         this.beforeGameState = new BeforeGameState(player);
+        this.mapAtInitialRun = mapAtInitialRun;
         player.setGameMode(GameMode.CREATIVE);
         for (PotionEffect p : player.getActivePotionEffects()) {
             player.removePotionEffect(p.getType());

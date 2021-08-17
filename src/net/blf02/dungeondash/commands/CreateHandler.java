@@ -36,7 +36,7 @@ public class CreateHandler {
                 Util.sendMessage(sender, "That map already exists!");
             } else {
                 Tracker.creationStatus.put(player.getDisplayName(),
-                        new CreateState(player, new DDMap(args[1], null, null, null)));
+                        new CreateState(player, new DDMap(args[1], null, null, null), null));
                 Util.sendMessage(sender, "Created map with name '" + args[1] + "'! Type `/ddash create spawn` or use the =Lime Dye= to set the spawnpoint for this map, or `/ddash create cancel` to cancel creation!");
             }
         } else if (args[1].equals("spawn")) {
@@ -60,7 +60,12 @@ public class CreateHandler {
                 Util.sendMessage(sender, "Error: Map is missing needed properties! Make sure you've set the 'spawn' and both `end corners`!");
                 return;
             }
-            boolean res = map.saveMap(sender);
+            boolean res;
+            if (state.mapAtInitialRun != null) {
+                res = map.saveMap(sender, state.mapAtInitialRun);
+            } else {
+                res = map.saveMap(sender);
+            }
             if (res) {
                 Util.sendMessage(sender, "Map saved successfully!");
                 Tracker.maps.add(map);

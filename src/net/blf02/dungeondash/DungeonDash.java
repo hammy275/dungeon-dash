@@ -38,7 +38,7 @@ public class DungeonDash extends JavaPlugin {
         // Set serverDir and mapsDir
         serverDir = this.getServer().getWorldContainer().getAbsolutePath();
         this.getCommand("ddash").setExecutor(new MainExecutor());
-        Path mapsDirPath = Paths.get(serverDir, "dungeondash_maps");
+        Path mapsDirPath = Paths.get(serverDir, "dungeondash_data", "dungeondash_maps");
         mapsDir = mapsDirPath.toString();
         if (!mapsDir.endsWith("/")) {
             mapsDir += "/";

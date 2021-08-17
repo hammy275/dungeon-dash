@@ -2,6 +2,7 @@ package net.blf02.dungeondash.commands;
 
 import net.blf02.dungeondash.DungeonDash;
 import net.blf02.dungeondash.config.Constants;
+import net.blf02.dungeondash.game.CreateState;
 import net.blf02.dungeondash.game.DDMap;
 import net.blf02.dungeondash.game.Lobby;
 import net.blf02.dungeondash.game.PlayerState;
@@ -57,10 +58,32 @@ public class MainExecutor implements CommandExecutor {
             } else {
                 removeMap(commandSender, args[1]);
             }
+        } else if (args[0].equals("edit")) {
+            if (args.length < 2) {
+                Util.sendMessage(commandSender, "Missing the name of the map to edit!");
+            } else {
+                editMap(commandSender, args[1]);
+            }
         } else {
             Util.sendMessage(commandSender, "Invalid command! Type /ddash help for help!");
         }
         return true;
+    }
+
+    public void editMap(CommandSender sender, String mapName) {
+        if (!(sender instanceof Player)) {
+            Util.sendMessage(sender, "You can't edit a map as a non-player!");
+        } else {
+            for (DDMap map : Tracker.maps) {
+                if (map.mapDisplayName.equals(mapName)) {
+                    Player player = (Player) sender;
+                    Tracker.creationStatus.put(player.getDisplayName(), new CreateState(player, map, map));
+                    Util.sendMessage(player, "Editing map =" + map.mapDisplayName + "=.");
+                    return;
+                }
+            }
+            Util.sendMessage(sender, "Could not find map =" + mapName + "=!");
+        }
     }
 
     public void removeMap(CommandSender sender, String mapName) {
@@ -131,11 +154,12 @@ public class MainExecutor implements CommandExecutor {
         Util.sendMessage(sender, new String[]{
                 "`/ddash help` - View this help command.",
                 "`/ddash version` - View the version of DungeonDash this server is using.",
-                "`/ddash play` (Map Name) - Play the specified map name",
+                "`/ddash play (Map Name)` - Play the specified map name",
                 "`/ddash create` - DungeonDash map creator. Type /ddash create help for information on using it.",
                 "`/ddash leave` - Leave a game or lobby of DungeonDash.",
                 "`/ddash list` - List all available DungeonDash maps.",
-                "`/ddash remove` - Remove a DungeonDash map."
+                "`/ddash remove (Map Name)` - Remove a DungeonDash map.",
+                "`/ddash edit (Map Name)` - Edit a DungeonDash map."
         });
     }
 
