@@ -8,6 +8,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
@@ -48,6 +49,9 @@ public class PlayerState implements Comparable<PlayerState> {
         player.setHealth(20);
         player.setFoodLevel(20);
         player.setSaturation(999999);
+        for (PotionEffect p : player.getActivePotionEffects()) {
+            player.removePotionEffect(p.getType());
+        }
     }
 
     public void doRespawn(Player player, boolean forceRespawn) {

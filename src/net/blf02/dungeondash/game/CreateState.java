@@ -6,6 +6,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.potion.PotionEffect;
 
 public class CreateState {
 
@@ -19,6 +20,9 @@ public class CreateState {
         this.player = player;
         this.beforeGameState = new BeforeGameState(player);
         player.setGameMode(GameMode.CREATIVE);
+        for (PotionEffect p : player.getActivePotionEffects()) {
+            player.removePotionEffect(p.getType());
+        }
         updateInventory();
     }
 
