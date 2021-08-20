@@ -2,6 +2,8 @@ package net.blf02.dungeondash.utils;
 
 
 import net.blf02.dungeondash.game.*;
+import net.blf02.dungeondash.inventory.BaseGUI;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.scoreboard.ScoreboardManager;
 
 import java.util.*;
@@ -31,6 +33,9 @@ public class Tracker {
 
     // BeforeGameStates to re-apply (used to prevent a crash in EventHandler)
     public static final Set<BeforeGameState> beforeGameStates = new LinkedHashSet<>();
+
+    // Currently active GUIs
+    public static final Map<Inventory, BaseGUI> guis = new HashMap<>();
 
     // Get Map by name.
     public static DDMap getMap(String mapName) {

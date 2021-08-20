@@ -6,10 +6,12 @@ import net.blf02.dungeondash.event.ConstantTick;
 import net.blf02.dungeondash.event.EventHandler;
 import net.blf02.dungeondash.game.DDMap;
 import net.blf02.dungeondash.game.PlayerState;
+import net.blf02.dungeondash.inventory.ExampleGUI;
 import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -93,5 +95,6 @@ public class DungeonDash extends JavaPlugin {
         Tracker.lobbies.clear();
         Tracker.lobbiesToRemove.clear();
         Tracker.beforeGameStates.clear();
+        Tracker.guis.clear();
     }
 }

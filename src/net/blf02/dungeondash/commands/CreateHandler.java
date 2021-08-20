@@ -2,6 +2,7 @@ package net.blf02.dungeondash.commands;
 
 import net.blf02.dungeondash.game.CreateState;
 import net.blf02.dungeondash.game.DDMap;
+import net.blf02.dungeondash.inventory.ExampleGUI;
 import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;
 import org.bukkit.command.CommandSender;
@@ -116,6 +117,9 @@ public class CreateHandler {
             } else {
                 Util.sendMessage(sender, "Could not cancel creation process as one was not started!");
             }
+        } else if (args[1].equals("test")) {
+            ExampleGUI gui = new ExampleGUI();
+            gui.openOnPlayer(player);
         }
         else {
             Util.sendMessage(sender, "Invalid subcommand! Type `/ddash create help` for help!");

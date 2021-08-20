@@ -2,6 +2,7 @@ package net.blf02.dungeondash.event;
 
 import net.blf02.dungeondash.game.CreateState;
 import net.blf02.dungeondash.game.PlayerState;
+import net.blf02.dungeondash.inventory.BaseGUI;
 import net.blf02.dungeondash.utils.Tracker;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -9,6 +10,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -92,6 +96,33 @@ public class EventHandler implements Listener {
         Bukkit.getServer().dispatchCommand(event.getPlayer(), command);
         if (doInventoryUpdate) {
             state.updateInventory();
+        }
+    }
+
+    @org.bukkit.event.EventHandler
+    public void onInventoryDrag(final InventoryDragEvent event) {
+        BaseGUI gui = Tracker.guis.get(event.getInventory());
+        if (gui != null) {
+            gui.onInventoryDrag(event);
+        }
+    }
+
+    @org.bukkit.event.EventHandler
+    public void onItemClick(final InventoryClickEvent event) {
+        BaseGUI gui = Tracker.guis.get(event.getInventory());
+        if (gui != null) {
+            if (event.getRawSlot() < gui.inv.getSize()) {
+                gui.onItemClick(event.getCurrentItem(), event.getRawSlot(), event.getWhoClicked());
+            }
+            event.setCancelled(true);
+        }
+    }
+
+    @org.bukkit.event.EventHandler
+    public void onInventoryClose(final InventoryCloseEvent event) {
+        BaseGUI gui = Tracker.guis.get(event.getInventory());
+        if (gui != null) {
+            Tracker.guis.remove(gui.inv);
         }
     }
 
