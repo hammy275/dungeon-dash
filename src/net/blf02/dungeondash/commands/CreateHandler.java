@@ -3,6 +3,7 @@ package net.blf02.dungeondash.commands;
 import net.blf02.dungeondash.game.CreateState;
 import net.blf02.dungeondash.game.DDMap;
 import net.blf02.dungeondash.inventory.ExampleGUI;
+import net.blf02.dungeondash.inventory.MapCreationGUI;
 import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;
 import org.bukkit.command.CommandSender;
@@ -11,17 +12,20 @@ import org.bukkit.entity.Player;
 public class CreateHandler {
 
     public static final String[] helpMsg = new String[]{
+            "=DungeonDash Creation Commands=",
             "`/ddash create help` - Displays this help message",
             "`/ddash create [Map Name]` - Begins creating a map with the name 'Map Name'",
             "`/ddash create spawn` (=Lime Dye=) - Run after creating a map to set the starting point for players.",
             "`/ddash create end1` (=Red Dye=) - Run after the above command to set the first corner of the ending zone where you're standing.",
             "`/ddash create end2` (=Red Dye=) - Run after the above command to set the second corner for the ending zone where you're standing.",
+            "`/ddash create settings` (=Command Block=) - Opens the settings for the map to adjust options, save, and/or cancel creation.",
+            /* No longer shown due to /ddash create settings
             "`/ddash create void_respawn` (=Bedrock=) - Enables/disables the void respawning players. Defaults to false.",
             "`/ddash create water_respawn` (=Water Bucket=) - Enables/disables water respawning players. Defaults to false.",
             "`/ddash create respawns_kill` (=Totem of Undying=) - Enables/disables respawns killing the player instead. Defaults to false.",
             "`/ddash create use_chaser` (=Armor Stand=) - Enables/disables the chaser. If not enabled, first to finish wins! Defaults to true.",
             "`/ddash create save` (=Command Block=) - Saves the map to disk, and makes it available to players to play.",
-            "`/ddash create cancel` (=Barrier in Rightmost Hotbar Slot=) - Run during any point of the creation process to cancel creation."
+            "`/ddash create cancel` (=Barrier in Rightmost Hotbar Slot=) - Run during any point of the creation process to cancel creation."*/
     };
 
     public static void handleCreateCommand(CommandSender sender, String[] args) {
@@ -117,8 +121,9 @@ public class CreateHandler {
             } else {
                 Util.sendMessage(sender, "Could not cancel creation process as one was not started!");
             }
-        } else if (args[1].equals("test")) {
-            ExampleGUI gui = new ExampleGUI();
+        } else if (args[1].equals("settings")) {
+            CreateState state = Tracker.creationStatus.get(player.getDisplayName());
+            MapCreationGUI gui = new MapCreationGUI(state);
             gui.openOnPlayer(player);
         }
         else {

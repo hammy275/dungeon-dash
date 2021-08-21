@@ -76,20 +76,8 @@ public class EventHandler implements Listener {
             doInventoryUpdate = false;
         } else if (item == Material.RED_DYE) {
             command = "ddash create end" + state.currentCornerItem;
-        } else if (item == Material.BEDROCK || meta.getDisplayName().contains("Void Respawns")) {
-            command = "ddash create void_respawn";
-        } else if (item == Material.WATER_BUCKET || meta.getDisplayName().contains("Water Respawns")) {
-            command = "ddash create water_respawn";
-        } else if (item == Material.TOTEM_OF_UNDYING || meta.getDisplayName().contains("Respawns Kill")) {
-            command = "ddash create respawns_kill";
-        } else if (item == Material.ARMOR_STAND || meta.getDisplayName().contains("Use a Chaser")) {
-            command = "ddash create use_chaser";
         } else if (item == Material.COMMAND_BLOCK) {
-            command = "ddash create save";
-            doInventoryUpdate = false;
-        } else if (item == Material.BARRIER && meta.getDisplayName().contains("Cancel Map Creation")) {
-            command = "ddash create cancel";
-            doInventoryUpdate = false;
+            command = "ddash create settings";
         } else {
             return;
         }

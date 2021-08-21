@@ -25,7 +25,23 @@ public abstract class BaseGUI {
         Tracker.guis.put(inv, this);
     }
 
+    public void registerItem(ItemStack stack) {
+        inv.addItem(stack);
+    }
+
+    public void replaceItem(int slot, ItemStack stack) {
+        inv.setItem(slot, stack);
+    }
+
     public void registerItem(final Material material, final String name, @Nullable final String... lore) {
+        registerItem(createItem(material, name, lore));
+    }
+
+    public void replaceItem(int slot, final Material material, final String name, @Nullable final String... lore) {
+        replaceItem(slot, createItem(material, name, lore));
+    }
+
+    private ItemStack createItem(final Material material, final String name, @Nullable final String... lore) {
         ItemStack stack = new ItemStack(material);
         ItemMeta meta = stack.getItemMeta();
         meta.setDisplayName(name);
@@ -33,8 +49,7 @@ public abstract class BaseGUI {
             meta.setLore(Arrays.asList(lore));
         }
         stack.setItemMeta(meta);
-
-        inv.addItem(stack);
+        return stack;
     }
 
     public void openOnPlayer(Player player) {
