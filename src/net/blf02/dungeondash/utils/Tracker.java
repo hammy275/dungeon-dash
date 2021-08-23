@@ -4,6 +4,7 @@ package net.blf02.dungeondash.utils;
 import net.blf02.dungeondash.game.*;
 import net.blf02.dungeondash.inventory.BaseGUI;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.scoreboard.ScoreboardManager;
 
 import java.util.*;
@@ -36,6 +37,12 @@ public class Tracker {
 
     // Currently active GUIs
     public static final Map<Inventory, BaseGUI> guis = new HashMap<>();
+
+    // Currently loaded PlayerStorage's
+    public static final Map<UUID, PlayerStorage> playerStorage = new HashMap<>();
+
+    // Current async tasks
+    public static final Set<TaskWithAfter> currentTasks = new HashSet<>();
 
     // Get Map by name.
     public static DDMap getMap(String mapName) {

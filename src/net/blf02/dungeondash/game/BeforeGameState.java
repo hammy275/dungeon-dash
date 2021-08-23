@@ -1,16 +1,21 @@
 package net.blf02.dungeondash.game;
 
+import net.blf02.dungeondash.utils.PlayerStorage;
+import net.blf02.dungeondash.utils.Tracker;
+import net.blf02.dungeondash.utils.Util;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffect;
 
+import java.io.Serializable;
 import java.util.Collection;
+import java.util.UUID;
 
-public class BeforeGameState {
+public class BeforeGameState implements Serializable {
 
-    public Player player;
+    public transient Player player;
 
     public Location location;
     public double health;
@@ -30,6 +35,18 @@ public class BeforeGameState {
         this.inventory = player.getInventory().getContents();
         this.gamemode = player.getGameMode();
         this.potionEffects = player.getActivePotionEffects();
+
+        Util.runWithPlayerStorage(this.player, () -> this.saveBeforeGameState(false));
+    }
+
+    public void saveBeforeGameState(boolean makeNull) {
+        PlayerStorage storage = Tracker.playerStorage.get(this.player.getUniqueId());
+        if (storage == null) return;
+        if (makeNull) {
+            storage.setBeforeGameState(null);
+        } else {
+            storage.setBeforeGameState(this);
+        }
     }
 
     public void restoreState() {
@@ -48,4 +65,8 @@ public class BeforeGameState {
         player.addPotionEffects(this.potionEffects);
     }
 
+    @Override
+    public String toString() {
+        return "Gamemode " + gamemode.toString() + " with " + health + "HP and " + this.food + "food.";
+    }
 }

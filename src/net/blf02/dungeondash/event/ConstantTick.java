@@ -2,23 +2,41 @@ package net.blf02.dungeondash.event;
 
 import net.blf02.dungeondash.config.Config;
 import net.blf02.dungeondash.game.*;
+import net.blf02.dungeondash.utils.TaskWithAfter;
 import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.scheduler.BukkitTask;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 public class ConstantTick {
 
     public static final Particle.DustOptions endBorderColor = new Particle.DustOptions(Color.RED, 1);
 
     public static void handleEveryTick() {
+        handleAsyncTasks();
         handlePlayersPlaying();
         tickLobbies();
         tickLobbyChasers();
         handleCreateStates();
         tickBeforeGameStates();
+    }
+
+    public static void handleAsyncTasks() {
+        // Itreate through all available async tasks, calling the after afterwards.
+        Set<TaskWithAfter> tasksToRemove = new HashSet<>();
+        for (TaskWithAfter t : Tracker.currentTasks) {
+            if (!Bukkit.getScheduler().isCurrentlyRunning(t.task.getTaskId())) {
+                t.after.run();
+            }
+        }
+        for (TaskWithAfter t : tasksToRemove) {
+            Tracker.currentTasks.remove(t);
+        }
     }
 
     public static void handlePlayersPlaying() {

@@ -1,16 +1,43 @@
 package net.blf02.dungeondash.utils;
 
+import net.blf02.dungeondash.DungeonDash;
 import net.blf02.dungeondash.config.Constants;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.libs.org.eclipse.sisu.Nullable;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.Objects;
 
 public class Util {
+
+    /**
+     * Run a function with access to a player's PlayerStorage instance.
+     *
+     * Can execute anywhere from a tick from now to several seconds from now due to requiring disk I/O!
+     *
+     * @param player Player to run on.
+     * @param toRun Runnable. Should get the PlayerStorage from Tracker.playerStorage.
+     */
+    public static void runWithPlayerStorage(Player player, Runnable toRun) {
+        doAsync(() -> PlayerStorage.loadPlayerStorage(player), toRun);
+    }
+
+    /**
+     * Run an async task with sync after.
+     *
+     * @param task The function to run async.
+     * @param after The function to run after that's sync.
+     */
+    public static void doAsync(Runnable task, Runnable after) {
+        BukkitTask bukkitTask = Bukkit.getScheduler().runTaskAsynchronously(DungeonDash.instance, task);
+        Tracker.currentTasks.add(new TaskWithAfter(bukkitTask, after));
+    }
 
     /**
      * Processes a Message to use Color-Code Formatting.

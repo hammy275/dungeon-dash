@@ -1,6 +1,7 @@
 package net.blf02.dungeondash;
 
 import net.blf02.dungeondash.commands.MainExecutor;
+import net.blf02.dungeondash.event.ConstantMinute;
 import net.blf02.dungeondash.event.ConstantSecond;
 import net.blf02.dungeondash.event.ConstantTick;
 import net.blf02.dungeondash.event.EventHandler;
@@ -25,6 +26,7 @@ public class DungeonDash extends JavaPlugin {
     public static String serverDir;
     // Ends in trailing /
     public static String mapsDir;
+    public static String playerDataDir;
 
     public static DungeonDash instance;
 
@@ -41,9 +43,14 @@ public class DungeonDash extends JavaPlugin {
         serverDir = this.getServer().getWorldContainer().getAbsolutePath();
         this.getCommand("ddash").setExecutor(new MainExecutor());
         Path mapsDirPath = Paths.get(serverDir, "dungeondash_data", "dungeondash_maps");
+        Path playerDataDirPath = Paths.get(serverDir, "dungeondash_data", "playerdata");
         mapsDir = mapsDirPath.toString();
+        playerDataDir = playerDataDirPath.toString();
         if (!mapsDir.endsWith("/")) {
             mapsDir += "/";
+        }
+        if (!playerDataDir.endsWith("/")) {
+            playerDataDir += "/";
         }
         // Load all of the maps for DungeonDash
         File mapsDir = mapsDirPath.toFile();
@@ -73,9 +80,18 @@ public class DungeonDash extends JavaPlugin {
             }
         }
 
+        File playerDataDir = playerDataDirPath.toFile();
+        if (!playerDataDir.exists()) {
+            if (!playerDataDir.mkdirs()) {
+                System.out.println("Failed to make directory " + playerDataDir + " for DungeonDash player data!");
+                throw new RuntimeException("Could not make directory for DungeonDash player data!");
+            }
+        }
+
         // Function to run every tick
         this.getServer().getScheduler().runTaskTimer(this, ConstantTick::handleEveryTick, 0, 1);
         this.getServer().getScheduler().runTaskTimer(this, ConstantSecond::handleEverySecond, 0, 20);
+        this.getServer().getScheduler().runTaskTimer(this, ConstantMinute::handleEveryMinute, 0, 20*60);
         this.getServer().getPluginManager().registerEvents(new EventHandler(), this);
     }
 
@@ -96,5 +112,7 @@ public class DungeonDash extends JavaPlugin {
         Tracker.lobbiesToRemove.clear();
         Tracker.beforeGameStates.clear();
         Tracker.guis.clear();
+        Tracker.playerStorage.clear();
+        Tracker.currentTasks.clear();
     }
 }
