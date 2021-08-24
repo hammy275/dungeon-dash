@@ -1,18 +1,16 @@
 package net.blf02.dungeondash;
 
 import net.blf02.dungeondash.commands.MainExecutor;
-import net.blf02.dungeondash.event.ConstantMinute;
 import net.blf02.dungeondash.event.ConstantSecond;
 import net.blf02.dungeondash.event.ConstantTick;
 import net.blf02.dungeondash.event.EventHandler;
 import net.blf02.dungeondash.game.DDMap;
 import net.blf02.dungeondash.game.PlayerState;
-import net.blf02.dungeondash.inventory.ExampleGUI;
+import net.blf02.dungeondash.utils.Config;
 import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -33,6 +31,13 @@ public class DungeonDash extends JavaPlugin {
     @Override
     public void onEnable() {
         super.onEnable();
+
+        Config.config = this.getConfig();
+        Config.addDefaultOptions();
+        Config.config.options().copyDefaults(true);
+        this.saveConfig();
+        Config.readOptions();
+
 
         instance = JavaPlugin.getPlugin(DungeonDash.class);
 
@@ -91,7 +96,6 @@ public class DungeonDash extends JavaPlugin {
         // Function to run every tick
         this.getServer().getScheduler().runTaskTimer(this, ConstantTick::handleEveryTick, 0, 1);
         this.getServer().getScheduler().runTaskTimer(this, ConstantSecond::handleEverySecond, 0, 20);
-        this.getServer().getScheduler().runTaskTimer(this, ConstantMinute::handleEveryMinute, 0, 20*60);
         this.getServer().getPluginManager().registerEvents(new EventHandler(), this);
     }
 
@@ -100,10 +104,12 @@ public class DungeonDash extends JavaPlugin {
         super.onDisable();
         for (Map.Entry<String, PlayerState> entry : Tracker.playStatus.entrySet()) {
             Util.sendMessage(entry.getValue().player,
-                    ChatColor.RED + "The plugin is being disabled due to a server reload/restart/shutdown!" +
+                    ChatColor.DARK_GRAY + "The plugin is being disabled due to a server reload/restart/shutdown!" +
                             " Kicking you from the game...");
-            entry.getValue().leaveGame();
+            entry.getValue().leaveGame(false);
         }
+        EventHandler.saveDDashData(false);
+
         Tracker.creationStatus.clear();
         Tracker.maps.clear();
         Tracker.playStatus.clear();

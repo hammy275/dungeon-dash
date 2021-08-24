@@ -70,9 +70,9 @@ public class PlayerState implements Comparable<PlayerState> {
         doRespawn(player, false);
     }
 
-    public void leaveGame() {
+    public void leaveGame(boolean useAsync) {
         Tracker.playStatusesToRemove.add(player.getDisplayName());
-        this.beforeGameState.restoreState();
+        this.beforeGameState.restoreState(useAsync);
         PlayerState toRemove = null;
         for (PlayerState s : this.lobby.playerStates) {
             if (s.player.getDisplayName().equals(player.getDisplayName())) {
@@ -93,7 +93,7 @@ public class PlayerState implements Comparable<PlayerState> {
         } else {
             Util.sendMessage(player, "You lose!");
             player.sendTitle(ChatColor.DARK_RED + "You lose!", null, 5, 50, 5);
-            leaveGame();
+            leaveGame(true);
         }
     }
 
@@ -103,7 +103,7 @@ public class PlayerState implements Comparable<PlayerState> {
         } else {
             Util.sendMessage(this.player, "You win!");
             player.sendTitle(ChatColor.GREEN + "You win!", null, 5, 50, 5);
-            leaveGame();
+            leaveGame(true);
         }
     }
 

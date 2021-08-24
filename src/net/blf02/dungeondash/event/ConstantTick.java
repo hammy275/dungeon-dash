@@ -7,7 +7,6 @@ import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;
 import org.bukkit.*;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.scheduler.BukkitTask;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -30,8 +29,9 @@ public class ConstantTick {
         // Itreate through all available async tasks, calling the after afterwards.
         Set<TaskWithAfter> tasksToRemove = new HashSet<>();
         for (TaskWithAfter t : Tracker.currentTasks) {
-            if (!Bukkit.getScheduler().isCurrentlyRunning(t.task.getTaskId())) {
+            if (!Bukkit.getScheduler().isCurrentlyRunning(t.task.getTaskId()) && !Bukkit.getScheduler().isQueued(t.task.getTaskId())) {
                 t.after.run();
+                tasksToRemove.add(t);
             }
         }
         for (TaskWithAfter t : tasksToRemove) {
@@ -174,7 +174,7 @@ public class ConstantTick {
 
     public static void tickBeforeGameStates() {
         for (BeforeGameState s : Tracker.beforeGameStates) {
-            s.restoreState();
+            s.restoreState(true);
         }
         Tracker.beforeGameStates.clear();
     }

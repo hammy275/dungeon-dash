@@ -11,7 +11,6 @@ import org.bukkit.potion.PotionEffect;
 
 import java.io.Serializable;
 import java.util.Collection;
-import java.util.UUID;
 
 public class BeforeGameState implements Serializable {
 
@@ -49,7 +48,7 @@ public class BeforeGameState implements Serializable {
         }
     }
 
-    public void restoreState() {
+    public void restoreState(boolean useAsync) {
         player.setFallDistance(0);
         player.teleport(location);
         player.setFallDistance(0);
@@ -63,6 +62,16 @@ public class BeforeGameState implements Serializable {
             player.removePotionEffect(p.getType());
         }
         player.addPotionEffects(this.potionEffects);
+
+        if (useAsync) {
+            Util.runWithPlayerStorage(this.player, () -> this.saveBeforeGameState(true));
+        } else {
+            PlayerStorage storage = Tracker.playerStorage.get(this.player.getUniqueId());
+            if (storage != null) {
+                storage.setBeforeGameState(null);
+            }
+        }
+
     }
 
     @Override

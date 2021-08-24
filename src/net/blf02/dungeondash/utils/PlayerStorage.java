@@ -19,7 +19,7 @@ import java.util.zip.GZIPOutputStream;
 public class PlayerStorage implements Serializable {
 
     private transient static final long serialVersionUID = 1216119498748966186L;
-    public transient int minutesSinceLastAccess = 0;
+    public transient int savesSinceLastAccess = 0;
     public transient Player player;
 
     protected UUID playerUUID;
@@ -31,12 +31,12 @@ public class PlayerStorage implements Serializable {
     }
 
     public BeforeGameState getBeforeGameState() {
-        this.minutesSinceLastAccess = 0;
+        this.savesSinceLastAccess = 0;
         return this.preGameState;
     }
 
     public void setBeforeGameState(BeforeGameState state) {
-        this.minutesSinceLastAccess = 0;
+        this.savesSinceLastAccess = 0;
         this.preGameState = state;
     }
 
@@ -44,7 +44,7 @@ public class PlayerStorage implements Serializable {
         Bukkit.getScheduler().runTaskAsynchronously(DungeonDash.instance, this::doSave);
     }
 
-    private void doSave() {
+    public void doSave() {
         String filePath = DungeonDash.playerDataDir + player.getUniqueId() + ".data";
         try {
             BukkitObjectOutputStream out = new BukkitObjectOutputStream(

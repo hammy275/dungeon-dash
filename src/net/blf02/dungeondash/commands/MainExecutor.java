@@ -111,7 +111,7 @@ public class MainExecutor implements CommandExecutor {
             if (state == null) {
                 Util.sendMessage(sender, "You aren't in a game right now!");
             } else {
-                state.leaveGame();
+                state.leaveGame(true);
                 Util.sendMessage(sender, "You left the game!");
             }
         } else {
