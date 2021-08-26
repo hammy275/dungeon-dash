@@ -3,6 +3,7 @@ package net.blf02.dungeondash.commands;
 import net.blf02.dungeondash.game.CreateState;
 import net.blf02.dungeondash.game.DDMap;
 import net.blf02.dungeondash.inventory.ExampleGUI;
+import net.blf02.dungeondash.inventory.ExamplePagedGUI;
 import net.blf02.dungeondash.inventory.MapCreationGUI;
 import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;

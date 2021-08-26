@@ -3,9 +3,13 @@ package net.blf02.dungeondash.game;
 import net.blf02.dungeondash.DungeonDash;
 import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.craftbukkit.libs.org.eclipse.sisu.Nullable;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.io.BukkitObjectInputStream;
 import org.bukkit.util.io.BukkitObjectOutputStream;
 
@@ -29,7 +33,8 @@ public class DDMap implements Serializable {
     public boolean voidRespawns = false;
     public boolean waterRespawns = false;
     public boolean hasChaser = true;
-    public int mapVersion = 1;
+    public String iconId = "COMPASS";
+    public int mapVersion = 2;
 
     public transient boolean isFullMap;
 
@@ -69,6 +74,17 @@ public class DDMap implements Serializable {
         boolean res = saveMap(sender);
         Tracker.maps.remove(oldMap);
         return res;
+    }
+
+    public ItemStack getGUIIcon() {
+        Material itemMat = Material.getMaterial(iconId);
+        if (itemMat == null) itemMat = Material.COMPASS;
+        ItemStack toRet = new ItemStack(itemMat);
+        ItemMeta meta = toRet.getItemMeta();
+        ChatColor color = this.hasChaser ? ChatColor.RED : ChatColor.BLUE;
+        meta.setDisplayName(ChatColor.RESET + color.toString() + this.mapDisplayName);
+        toRet.setItemMeta(meta);
+        return toRet;
     }
 
     public static DDMap loadMap(String path) {

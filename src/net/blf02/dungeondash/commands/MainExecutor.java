@@ -6,6 +6,7 @@ import net.blf02.dungeondash.game.CreateState;
 import net.blf02.dungeondash.game.DDMap;
 import net.blf02.dungeondash.game.Lobby;
 import net.blf02.dungeondash.game.PlayerState;
+import net.blf02.dungeondash.inventory.JoinGameGUI;
 import net.blf02.dungeondash.utils.PermissionChecker;
 import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;
@@ -30,9 +31,14 @@ public class MainExecutor implements CommandExecutor {
             help(commandSender);
         } else if (args[0].equals("version")) {
             version(commandSender);
-        } else if (args[0].equals("play")) {
+        } else if (args[0].equals("play") || args[0].equals("join")) {
             if (args.length < 2) {
-                Util.sendMessage(commandSender, "Please specify a lobby to join!");
+                if (commandSender instanceof Player) {
+                    JoinGameGUI gui = new JoinGameGUI();
+                    gui.openOnPlayer((Player) commandSender);
+                } else {
+                    Util.sendMessage(commandSender, "You are not a player!");
+                }
             } else {
                 joinGame(commandSender, args[1]);
             }

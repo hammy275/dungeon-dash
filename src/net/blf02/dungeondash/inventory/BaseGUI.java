@@ -15,7 +15,8 @@ import java.util.Arrays;
 
 public abstract class BaseGUI {
 
-    public final Inventory inv;
+    public Inventory inv;
+    public final String invName;
 
     public BaseGUI(int numRows, String name) {
         if (numRows < 1 || numRows > 6) {
@@ -23,6 +24,11 @@ public abstract class BaseGUI {
         }
         inv = Bukkit.createInventory(null, numRows * 9, name);
         Tracker.guis.put(inv, this);
+        this.invName = name;
+    }
+
+    public void removeItem(int slot) {
+        inv.clear(slot);
     }
 
     public void registerItem(ItemStack stack) {
@@ -41,7 +47,7 @@ public abstract class BaseGUI {
         replaceItem(slot, createItem(material, name, lore));
     }
 
-    private ItemStack createItem(final Material material, final String name, @Nullable final String... lore) {
+    protected ItemStack createItem(final Material material, final String name, @Nullable final String... lore) {
         ItemStack stack = new ItemStack(material);
         ItemMeta meta = stack.getItemMeta();
         meta.setDisplayName(name);
