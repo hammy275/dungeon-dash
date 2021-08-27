@@ -2,6 +2,7 @@ package net.blf02.dungeondash.inventory;
 
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 
 public class ExampleGUI extends BaseGUI {
@@ -14,7 +15,8 @@ public class ExampleGUI extends BaseGUI {
     }
 
     @Override
-    public void onItemClick(ItemStack stack, int slot, HumanEntity player) {
+    public void onItemClick(ItemStack stack, int slot, HumanEntity player, final InventoryClickEvent event) {
         System.out.println("Stack: " + stack + "\nSlot #: " + slot + "\nPlayer: " + player);
+        event.setCancelled(true);
     }
 }

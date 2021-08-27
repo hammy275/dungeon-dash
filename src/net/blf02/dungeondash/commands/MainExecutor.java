@@ -84,6 +84,7 @@ public class MainExecutor implements CommandExecutor {
                 if (map.mapDisplayName.equals(mapName)) {
                     Player player = (Player) sender;
                     Tracker.creationStatus.put(player.getDisplayName(), new CreateState(player, map, map));
+                    map.isFullMap = true;
                     Util.sendMessage(player, "Editing map =" + map.mapDisplayName + "=.");
                     return;
                 }

@@ -1,11 +1,13 @@
 package net.blf02.dungeondash.inventory;
 
+import net.blf02.dungeondash.DungeonDash;
 import net.blf02.dungeondash.utils.Tracker;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.craftbukkit.libs.org.eclipse.sisu.Nullable;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -16,6 +18,7 @@ import java.util.Arrays;
 public abstract class BaseGUI {
 
     public Inventory inv;
+    public BaseGUI lastGUI = null; // If non-null, will open this when the current GUI is closed.
     public final String invName;
 
     public BaseGUI(int numRows, String name) {
@@ -23,7 +26,6 @@ public abstract class BaseGUI {
             throw new IllegalArgumentException("Must specify 1-6 rows!");
         }
         inv = Bukkit.createInventory(null, numRows * 9, name);
-        Tracker.guis.put(inv, this);
         this.invName = name;
     }
 
@@ -59,14 +61,30 @@ public abstract class BaseGUI {
     }
 
     public void openOnPlayer(Player player) {
+        player.closeInventory(); // Close any inventory they may already have open!
         player.openInventory(inv);
+        Tracker.guis.put(inv, this);
     }
 
-    public abstract void onItemClick(ItemStack stack, int slot, HumanEntity player);
+    public void openOnPlayer(HumanEntity player) {
+        openOnPlayer(player, true);
+    }
+
+    public void openOnPlayer(HumanEntity player, boolean closeLast) {
+        if (closeLast) player.closeInventory(); // Close any inventory they may already have open!
+        player.openInventory(inv);
+        Tracker.guis.put(inv, this);
+    }
+
+    public abstract void onItemClick(ItemStack stack, int slot, HumanEntity player, final InventoryClickEvent event);
+
+    public void onInventoryClose(HumanEntity player) {
+        if (lastGUI != null) {
+            Bukkit.getScheduler().runTask(DungeonDash.instance, () -> lastGUI.openOnPlayer(player, false));
+        }
+    }
 
     public void onInventoryDrag(final InventoryDragEvent event) {
-        if (event.getInventory().equals(inv)) {
-            event.setCancelled(true);
-        }
+        event.setCancelled(true);
     }
 }

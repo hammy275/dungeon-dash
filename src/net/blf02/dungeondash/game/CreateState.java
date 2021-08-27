@@ -26,10 +26,14 @@ public class CreateState {
             player.removePotionEffect(p.getType());
         }
         updateInventory();
+        if (map.start != null) {
+            player.teleport(map.start);
+        }
     }
 
     public void wipeHotbar() {
-        for (int i = 0; i < 9; i++) {
+        // Only wipe hotbar slots that we're using
+        for (int i = 0; i < 3; i++) {
             player.getInventory().clear(i);
         }
     }

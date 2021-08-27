@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -73,6 +74,13 @@ public class MapCreationGUI extends BaseGUI {
         hasChaser.setItemMeta(meta);
         this.replaceItem(3, hasChaser);
 
+
+        ItemStack changeIcon = this.state.map.getGUIIcon();
+        meta = changeIcon.getItemMeta();
+        meta.setDisplayName(ChatColor.GRAY + "Change Map Icon");
+        changeIcon.setItemMeta(meta);
+        this.replaceItem(4, changeIcon);
+
         ItemStack saveItem = new ItemStack(Material.COMMAND_BLOCK);
         meta = saveItem.getItemMeta();
         meta.setDisplayName(ChatColor.DARK_PURPLE + "Save Map");
@@ -87,8 +95,8 @@ public class MapCreationGUI extends BaseGUI {
     }
 
     @Override
-    public void onItemClick(ItemStack stack, int slot, HumanEntity player) {
-        String command;
+    public void onItemClick(ItemStack stack, int slot, HumanEntity player, final InventoryClickEvent event) {
+        String command = null;
         boolean doExit = false;
         switch (slot) {
             case 0:
@@ -103,6 +111,10 @@ public class MapCreationGUI extends BaseGUI {
             case 3:
                 command = "ddash create use_chaser";
                 break;
+            case 4:
+                SetIconGUI setIconGUI = new SetIconGUI(this.state, this);
+                setIconGUI.openOnPlayer(player);
+                break;
             case 7:
                 command = "ddash create save";
                 doExit = true;
@@ -115,11 +127,14 @@ public class MapCreationGUI extends BaseGUI {
                 System.out.println("Bad option " + slot + "! Please report this to the dev!");
                 return;
         }
-        Bukkit.getServer().dispatchCommand(state.player, command);
+        if (command != null) {
+            Bukkit.getServer().dispatchCommand(state.player, command);
+        }
         if (doExit) {
             state.player.closeInventory();
         } else {
             this.updateItems();
         }
+        event.setCancelled(true);
     }
 }

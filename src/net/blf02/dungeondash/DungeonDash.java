@@ -4,6 +4,7 @@ import net.blf02.dungeondash.commands.MainExecutor;
 import net.blf02.dungeondash.event.ConstantSecond;
 import net.blf02.dungeondash.event.ConstantTick;
 import net.blf02.dungeondash.event.EventHandler;
+import net.blf02.dungeondash.game.CreateState;
 import net.blf02.dungeondash.game.DDMap;
 import net.blf02.dungeondash.game.PlayerState;
 import net.blf02.dungeondash.utils.Config;
@@ -107,6 +108,12 @@ public class DungeonDash extends JavaPlugin {
                     ChatColor.DARK_GRAY + "The plugin is being disabled due to a server reload/restart/shutdown!" +
                             " Kicking you from the game...");
             entry.getValue().leaveGame(false);
+        }
+        for (Map.Entry<String, CreateState> entry : Tracker.creationStatus.entrySet()) {
+            Util.sendMessage(entry.getValue().player,
+                    ChatColor.DARK_GRAY + "The plugin is being disabled due to a server reload/restart/shutdown!" +
+                            " Kicking you from map creation...");
+            entry.getValue().beforeGameState.restoreState(false);
         }
         EventHandler.saveDDashData(false);
 

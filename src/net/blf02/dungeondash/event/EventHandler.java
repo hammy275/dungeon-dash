@@ -112,8 +112,7 @@ public class EventHandler implements Listener {
         if (gui != null) {
             if (event.getRawSlot() < gui.inv.getSize() && event.getCurrentItem() != null &&
                     !event.getCurrentItem().getType().isAir()) {
-                event.setCancelled(true);
-                gui.onItemClick(event.getCurrentItem(), event.getRawSlot(), event.getWhoClicked());
+                gui.onItemClick(event.getCurrentItem(), event.getRawSlot(), event.getWhoClicked(), event);
             }
         }
     }
@@ -122,6 +121,7 @@ public class EventHandler implements Listener {
     public void onInventoryClose(final InventoryCloseEvent event) {
         BaseGUI gui = Tracker.guis.get(event.getInventory());
         if (gui != null) {
+            gui.onInventoryClose(event.getPlayer());
             Tracker.guis.remove(gui.inv);
         }
     }

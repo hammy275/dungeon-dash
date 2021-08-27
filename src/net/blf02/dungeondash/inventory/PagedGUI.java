@@ -5,11 +5,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Paged GUI.
@@ -23,6 +26,7 @@ import java.util.List;
 public abstract class PagedGUI extends BaseGUI {
 
     protected List<Inventory> invs = new ArrayList<>();
+    protected Map<Integer, ItemStack> bottomRowSlots = new HashMap<>();
     private int currentIndex = 0;
     private int currentAmountInLastInv = 0;
 
@@ -39,8 +43,18 @@ public abstract class PagedGUI extends BaseGUI {
 
     @Override
     public void replaceItem(int slot, ItemStack stack) {
-        createNewPageIfNeeded().setItem(slot, stack);
-        currentAmountInLastInv++;
+        if (slot < 9 * 5) {
+            createNewPageIfNeeded().setItem(slot, stack);
+            currentAmountInLastInv++;
+        } else if (slot == 9 * 5 || slot == 9 * 6 - 1) {
+            throw new IllegalArgumentException("Can't set slot for item to next page/previous page slots!");
+        } else {
+            bottomRowSlots.put(slot, stack);
+            for (Inventory i : this.invs) {
+                i.setItem(slot, stack);
+            }
+        }
+
     }
 
     /**
@@ -58,12 +72,15 @@ public abstract class PagedGUI extends BaseGUI {
             // Add next page and previous page arrows to bottom
             invs.get(invs.size() - 2).setItem(9 * 6 - 1, createItem(Material.ARROW, ChatColor.YELLOW + "Next Page"));
             newInv.setItem(9 * 5, createItem(Material.ARROW, ChatColor.YELLOW + "Previous Page"));
+            for (Map.Entry<Integer, ItemStack> entry : this.bottomRowSlots.entrySet()) {
+                newInv.setItem(entry.getKey(), entry.getValue());
+            }
         }
         return invs.get(invs.size() - 1);
     }
 
     @Override
-    public void onItemClick(ItemStack stack, int slot, HumanEntity player) {
+    public void onItemClick(ItemStack stack, int slot, HumanEntity player, final InventoryClickEvent event) {
         if (slot == 9 * 5) { // Previous Page
             Tracker.guis.remove(this.inv);
             inv = invs.get(--currentIndex);

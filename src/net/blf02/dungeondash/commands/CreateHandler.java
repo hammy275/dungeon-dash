@@ -63,7 +63,7 @@ public class CreateHandler {
             CreateState state = Tracker.creationStatus.get(player.getDisplayName());
             DDMap map = state.map;
             if (!map.isFullMap) {
-                Util.sendMessage(sender, "Error: Map is missing needed properties! Make sure you've set the 'spawn' and both `end corners`!");
+                Util.sendMessage(sender, "Error: Map is missing needed properties! Make sure you've set the `spawn` and both `end corners`!");
                 return;
             }
             boolean res;
