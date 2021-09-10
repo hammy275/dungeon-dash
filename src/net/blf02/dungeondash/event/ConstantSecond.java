@@ -1,13 +1,10 @@
 package net.blf02.dungeondash.event;
 
-import net.blf02.dungeondash.game.CreateState;
 import net.blf02.dungeondash.game.DDMap;
 import net.blf02.dungeondash.game.Lobby;
 import net.blf02.dungeondash.game.PlayerState;
 import net.blf02.dungeondash.utils.Tracker;
 import org.bukkit.ChatColor;
-import org.bukkit.Color;
-import org.bukkit.Particle;
 import org.bukkit.scoreboard.Score;
 
 import java.util.Map;
@@ -75,6 +72,12 @@ public class ConstantSecond {
                     Score playerScore = p.objective.getScore(String.format(ChatColor.BOLD + "%d: "
                                     + p.player.getDisplayName(), place));
                     playerScore.setScore(i--);
+
+                    Score timeLabel = p.objective.getScore(ChatColor.WHITE + "Current Time: ");
+                    timeLabel.setScore(i--);
+
+                    Score time = p.objective.getScore(ChatColor.AQUA.toString() + ChatColor.BOLD + p.getTimestampSinceStart(false));
+                    time.setScore(i--);
                 }
             }
         }

@@ -12,6 +12,9 @@ import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+
 public class PlayerState implements Comparable<PlayerState> {
 
     public DDMap map;
@@ -24,6 +27,7 @@ public class PlayerState implements Comparable<PlayerState> {
             scoreboard.registerNewObjective("ddash_scoreboard", "dummy", Constants.scoreboardTag)
             : scoreboard.getObjective("ddash_scoreboard");
     public BeforeGameState beforeGameState;
+    public LocalDateTime startTime;
 
     public PlayerState(DDMap map, Player player, Lobby lobby) {
         this.map = map;
@@ -70,18 +74,26 @@ public class PlayerState implements Comparable<PlayerState> {
     public void leaveGame(boolean useAsync) {
         Tracker.playStatusesToRemove.add(player.getDisplayName());
         this.beforeGameState.restoreState(useAsync);
-        PlayerState toRemove = null;
-        for (PlayerState s : this.lobby.playerStates) {
-            if (s.player.getDisplayName().equals(player.getDisplayName())) {
-                toRemove = s;
-                break;
-            }
-        }
-        if (toRemove != null) {
-            this.lobby.playerStates.remove(toRemove);
-        }
+        this.lobby.playerStates.remove(this);
         // Clear scoreboard
         player.setScoreboard(Tracker.manager.getNewScoreboard());
+    }
+
+    public String getTimestampSinceStart(boolean returnMS) {
+        long msTime = ChronoUnit.MILLIS.between(this.startTime, LocalDateTime.now());
+        long hours = 0;
+        long mins = 0;
+        long secs = 0;
+        hours = msTime / (1000*60*60);
+        msTime = msTime - (1000*60*60 * hours);
+        mins = msTime / (1000*60);
+        msTime = msTime - (1000*60 * mins);
+        secs = msTime / 1000;
+        msTime = msTime - (1000 * secs);
+        if (returnMS) {
+            return String.format("%d:%2d:%2d:%d", hours, mins, secs, msTime).replace(" ", "0");
+        }
+        return String.format("%d:%2d:%2d", hours, mins, secs).replace(" ", "0");
     }
 
     public void triggerLoss() {
@@ -98,7 +110,8 @@ public class PlayerState implements Comparable<PlayerState> {
         if (inLobby) {
             this.doRespawn(player, true);
         } else {
-            Util.sendMessage(this.player, "You win!");
+            String timestamp = getTimestampSinceStart(true);
+            Util.sendMessage(this.player, "You win! Your time was: " + ChatColor.AQUA + timestamp + ChatColor.GRAY +  ".");
             player.sendTitle(ChatColor.GREEN + "You win!", null, 5, 50, 5);
             leaveGame(true);
         }

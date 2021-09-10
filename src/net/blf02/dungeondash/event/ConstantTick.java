@@ -1,13 +1,23 @@
 package net.blf02.dungeondash.event;
 
 import net.blf02.dungeondash.config.Config;
-import net.blf02.dungeondash.game.*;
+import net.blf02.dungeondash.game.BeforeGameState;
+import net.blf02.dungeondash.game.CreateState;
+import net.blf02.dungeondash.game.DDMap;
+import net.blf02.dungeondash.game.Lobby;
+import net.blf02.dungeondash.game.PlayerState;
 import net.blf02.dungeondash.utils.TaskWithAfter;
 import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;
-import org.bukkit.*;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Color;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -87,6 +97,7 @@ public class ConstantTick {
                     p.inLobby = false;
                     Util.sendMessage(p.player, "Let the games begin!");
                     p.player.sendTitle(ChatColor.GREEN + "Go!", null, 5, 20, 5);
+                    p.startTime = LocalDateTime.now();
                 }
             } else if (lobby.ticksUntilStart % 20 == 0 && !lobby.gameStarted) {
                 int secsUntilStart = lobby.ticksUntilStart / 20;
