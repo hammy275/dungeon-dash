@@ -1,6 +1,5 @@
 package net.blf02.dungeondash.game;
 
-import net.blf02.dungeondash.config.Config;
 import net.blf02.dungeondash.config.Constants;
 import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;
@@ -19,8 +18,6 @@ public class PlayerState implements Comparable<PlayerState> {
     public Player player;
     public Lobby lobby;
     public boolean inLobby = true;
-    public Location lastPosition = new Location(null, 0, -5, 0);
-    public int ticksStill = 0;
     public Location respawnPoint;
     public Scoreboard scoreboard = Tracker.manager.getNewScoreboard();
     public Objective objective = scoreboard.getObjective("ddash_scoreboard") == null ?
@@ -104,18 +101,6 @@ public class PlayerState implements Comparable<PlayerState> {
             Util.sendMessage(this.player, "You win!");
             player.sendTitle(ChatColor.GREEN + "You win!", null, 5, 50, 5);
             leaveGame(true);
-        }
-    }
-
-    public void noStillCheck() {
-        if (!inLobby) {
-            Location newPos = player.getLocation();
-            if (Math.abs(newPos.getX() - lastPosition.getX()) < Config.stillDistance &&
-                    Math.abs(newPos.getY() - lastPosition.getY()) < Config.stillDistance &&
-                    Math.abs(newPos.getZ() - lastPosition.getZ()) < Config.stillDistance) {
-                ticksStill++;
-            }
-            this.lastPosition = newPos;
         }
     }
 

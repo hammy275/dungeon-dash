@@ -41,7 +41,6 @@ public class ConstantTick {
 
     public static void handlePlayersPlaying() {
         for (Map.Entry<String, PlayerState> entry : Tracker.playStatus.entrySet()) {
-            entry.getValue().noStillCheck();
             if (entry.getValue().isInEndingZone()) {
                 // Win!
                 entry.getValue().triggerVictory();
@@ -50,9 +49,6 @@ public class ConstantTick {
                 if (lobby != null && !entry.getValue().map.hasChaser) {
                     lobby.cleanLobby();
                 }
-            } else if (entry.getValue().ticksStill >= Config.ticksStillUntilDeath) {
-                entry.getValue().triggerLoss();
-                entry.getValue().ticksStill = 0;
             } else if (entry.getValue().player.getLocation().getY() < 0 && entry.getValue().map.voidRespawns) {
                 entry.getValue().attemptRespawn(entry.getValue().player);
             } else if (entry.getValue().player.getLocation().getBlock().getType() == Material.WATER
