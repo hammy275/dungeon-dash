@@ -80,9 +80,16 @@ public class MainExecutor implements CommandExecutor {
         if (!(sender instanceof Player)) {
             Util.sendMessage(sender, "You can't edit a map as a non-player!");
         } else {
+            Player player = (Player) sender;
+            if (Tracker.playStatus.get(player.getDisplayName()) != null) {
+                Util.sendMessage(player, "You're currently playing a map! Please use `/ddash leave` to leave, first!");
+                return;
+            } else if (Tracker.creationStatus.get(player.getDisplayName()) != null) {
+                Util.sendMessage(player, "You're already creating or editing a map!");
+                return;
+            }
             for (DDMap map : Tracker.maps) {
                 if (map.mapDisplayName.equals(mapName)) {
-                    Player player = (Player) sender;
                     Tracker.creationStatus.put(player.getDisplayName(), new CreateState(player, map, map));
                     map.isFullMap = true;
                     Util.sendMessage(player, "Editing map =" + map.mapDisplayName + "=.");
@@ -134,6 +141,8 @@ public class MainExecutor implements CommandExecutor {
                 Util.sendMessage(sender, "That map dos not exist!");
             } else if (Tracker.playStatus.get(player.getDisplayName()) != null) {
               Util.sendMessage(sender, "You are already in a game or lobby! Use `/ddash leave` to leave!");
+            } else if (Tracker.creationStatus.get(player.getDisplayName()) != null) {
+                Util.sendMessage(sender, "You are currently creating/editing a map!");
             } else {
                 Lobby lobby = Tracker.lobbies.get(map);
                 if (lobby == null) {

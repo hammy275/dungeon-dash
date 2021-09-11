@@ -2,8 +2,6 @@ package net.blf02.dungeondash.commands;
 
 import net.blf02.dungeondash.game.CreateState;
 import net.blf02.dungeondash.game.DDMap;
-import net.blf02.dungeondash.inventory.ExampleGUI;
-import net.blf02.dungeondash.inventory.ExamplePagedGUI;
 import net.blf02.dungeondash.inventory.MapCreationGUI;
 import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;
@@ -37,6 +35,8 @@ public class CreateHandler {
         Player player = (Player) sender;
         if (args[1].equals("help")) {
             Util.sendMessage(sender, helpMsg);
+        } else if (Tracker.playStatus.get(player.getDisplayName()) != null) {
+            Util.sendMessage(player, "You're currently playing a map! Please use `/ddash leave` to leave, first!");
         } else if (Tracker.creationStatus.get(player.getDisplayName()) == null) {
             if (Tracker.getMap(args[1]) != null) {
                 Util.sendMessage(sender, "That map already exists!");
