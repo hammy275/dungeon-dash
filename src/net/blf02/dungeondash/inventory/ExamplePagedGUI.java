@@ -1,5 +1,6 @@
 package net.blf02.dungeondash.inventory;
 
+import net.blf02.dungeondash.DungeonDash;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -19,7 +20,7 @@ public class ExamplePagedGUI extends PagedGUI {
     public void onItemClick(ItemStack stack, int slot, HumanEntity player, final InventoryClickEvent event) {
         super.onItemClick(stack, slot, player, event);
         if (stack == null || !stack.hasItemMeta()) return;
-        System.out.println("Clicked on item: " + stack.getItemMeta().getDisplayName());
+        DungeonDash.logger.info("Clicked on item: " + stack.getItemMeta().getDisplayName());
         event.setCancelled(true);
     }
 }

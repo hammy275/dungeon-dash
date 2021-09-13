@@ -53,7 +53,7 @@ public class PlayerStorage implements Serializable {
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("Failed to write player data for player " + player.getDisplayName() + "!");
+            DungeonDash.logger.warning("Failed to write player data for player " + player.getDisplayName() + "!");
         }
 
     }
@@ -86,7 +86,7 @@ public class PlayerStorage implements Serializable {
                 in.close();
                 res = ps;
             } catch (ClassNotFoundException | IOException e) {
-                System.out.println("Failed to load PlayerStorage for " + player.getDisplayName());
+                DungeonDash.logger.warning("Failed to load PlayerStorage for " + player.getDisplayName());
                 e.printStackTrace();
                 return null;
             }

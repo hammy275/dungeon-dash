@@ -18,6 +18,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class DungeonDash extends JavaPlugin {
 
@@ -28,6 +29,7 @@ public class DungeonDash extends JavaPlugin {
     public static String playerDataDir;
 
     public static DungeonDash instance;
+    public static Logger logger;
 
     @Override
     public void onEnable() {
@@ -41,6 +43,7 @@ public class DungeonDash extends JavaPlugin {
 
 
         instance = JavaPlugin.getPlugin(DungeonDash.class);
+        logger = this.getLogger();
 
         // Setup scoreboards and such
         Tracker.manager = Bukkit.getScoreboardManager();
@@ -62,24 +65,24 @@ public class DungeonDash extends JavaPlugin {
         File mapsDir = mapsDirPath.toFile();
         if (!mapsDir.exists()) {
             if (mapsDir.mkdirs()) {
-                System.out.println("Successfully made directory for DungeonDash maps!");
+                DungeonDash.logger.info("Successfully made directory for DungeonDash maps!");
             } else {
-                System.out.println("Failed to make directory " + mapsDir + " for DungeonDash maps!");
+                DungeonDash.logger.warning("Failed to make directory " + mapsDir + " for DungeonDash maps!");
                 throw new RuntimeException("Could not make directory for DungeonDash maps!");
             }
         } else {
             File[] possibleMaps = mapsDir.listFiles();
             if (possibleMaps == null) {
-                System.out.println("Failed to load maps!");
+                logger.warning("Failed to load maps!");
             } else {
                 for (File file : possibleMaps) {
                     if (file.isFile()) {
                         DDMap possibleMap = DDMap.loadMap(file.getAbsolutePath());
                         if (possibleMap != null) {
                             Tracker.maps.add(possibleMap);
-                            System.out.println("Loaded map " + possibleMap.mapDisplayName + "!");
+                            DungeonDash.logger.info("Loaded map " + possibleMap.mapDisplayName + "!");
                         } else {
-                            System.out.println(file + " is not a valid map!");
+                            DungeonDash.logger.warning(file + " is not a valid map!");
                         }
                     }
                 }
@@ -89,7 +92,7 @@ public class DungeonDash extends JavaPlugin {
         File playerDataDir = playerDataDirPath.toFile();
         if (!playerDataDir.exists()) {
             if (!playerDataDir.mkdirs()) {
-                System.out.println("Failed to make directory " + playerDataDir + " for DungeonDash player data!");
+                logger.warning("Failed to make directory " + playerDataDir + " for DungeonDash player data!");
                 throw new RuntimeException("Could not make directory for DungeonDash player data!");
             }
         }

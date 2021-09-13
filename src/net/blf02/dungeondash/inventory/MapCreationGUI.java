@@ -163,7 +163,6 @@ public class MapCreationGUI extends BaseGUI {
                 doExit = true;
                 break;
             default:
-                System.out.println("Bad option " + slot + "! Please report this to the dev!");
                 return;
         }
         if (command != null) {
