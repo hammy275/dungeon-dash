@@ -2,6 +2,7 @@ package net.blf02.dungeondash.game;
 
 import net.blf02.dungeondash.DungeonDash;
 import net.blf02.dungeondash.config.Config;
+import net.blf02.dungeondash.config.Constants;
 import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;
 import org.bukkit.ChatColor;
@@ -34,15 +35,21 @@ public class DDMap implements Serializable {
     public boolean voidRespawns = false;
     public boolean waterRespawns = false;
     public ChaserMode chaserMode = ChaserMode.CHASE_LAST;
-    public double chaserSpeed = Config.distanceToMoveFast;
+    public ChaserSpeed chaserSpeedEnum = ChaserSpeed.FAST;
     public String iconId = "COMPASS";
     public int mapVersion = 3;
+
+    public transient double chaserSpeed = Config.distanceToMoveFast;
 
     public DDMap(String mapDisplayName, Location start, Location end1, Location end2) {
         this.mapDisplayName = mapDisplayName;
         this.start = start;
         this.endCorner1 = end1;
         this.endCorner2 = end2;
+    }
+
+    public void updateChaserSpeed() {
+        this.chaserSpeed = this.chaserSpeedEnum.getSpeed(this.chaserMode);
     }
 
     public Location getCenterOfEnd() {
@@ -100,6 +107,16 @@ public class DDMap implements Serializable {
                     new GZIPInputStream(new FileInputStream(path)));
             DDMap map = (DDMap) in.readObject();
             in.close();
+            if (map.chaserMode == null) {
+                map.chaserMode = ChaserMode.CHASE_LAST;
+            }
+            if (map.chaserSpeedEnum == null) {
+                map.chaserSpeedEnum = ChaserSpeed.FAST;
+            }
+            if (map.iconId == null) {
+                map.iconId = "COMPASS";
+            }
+            map.updateChaserSpeed();
             return map;
         } catch (ClassNotFoundException | IOException e) {
             return null;
@@ -114,5 +131,36 @@ public class DDMap implements Serializable {
 
     public enum ChaserMode implements Serializable {
         CHASE_LAST, SHADOW, NO_CHASER
+    }
+
+    public enum ChaserSpeed implements Serializable {
+        SLOW(0),
+        MEDIUM(1),
+        FAST(2);
+
+        int index;
+
+        ChaserSpeed(int index) {
+            this.index = index;
+        }
+
+        double getSpeed(ChaserMode mode) {
+            if (mode == ChaserMode.CHASE_LAST) {
+                return Constants.chaserSpeeds[index];
+            } else if (mode == ChaserMode.SHADOW) {
+                return Constants.shadowSpeeds[index];
+            }
+            return 0;
+        }
+
+        public ChaserSpeed getNext() {
+            if (this == ChaserSpeed.SLOW) {
+                return ChaserSpeed.MEDIUM;
+            } else if (this == ChaserSpeed.MEDIUM) {
+                return ChaserSpeed.FAST;
+            } else {
+                return ChaserSpeed.SLOW;
+            }
+        }
     }
 }

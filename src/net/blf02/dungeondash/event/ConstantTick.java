@@ -165,6 +165,10 @@ public class ConstantTick {
                 }
             } else if (entry.getKey().chaserMode == DDMap.ChaserMode.SHADOW) {
                 for (ArmorStand chaser : chasers) {
+                    if (chaser.getTicksLived() / speed % 1 != 0) { // Move speed% of the time.
+                        PlayerState chased = Tracker.playStatus.get(chaser.getCustomName());
+                        chaser.teleport(entry.getValue().playerToPositions.get(chased).remove().asLocation(chaser.getWorld()));
+                    }
 
                 }
             }

@@ -23,7 +23,9 @@ public class CreateHandler {
             "`/ddash create water_respawn` (=Water Bucket=) - Enables/disables water respawning players. Defaults to false.",
             "`/ddash create respawns_kill` (=Totem of Undying=) - Enables/disables respawns killing the player instead. Defaults to false.",
             "`/ddash create save` (=Command Block=) - Saves the map to disk, and makes it available to players to play.",
-            "`/ddash create cancel` (=Barrier in Rightmost Hotbar Slot=) - Run during any point of the creation process to cancel creation."*/
+            "`/ddash create cancel` (=Barrier in Rightmost Hotbar Slot=) - Run during any point of the creation process to cancel creation.",
+            "`/ddash create change_speed` - Changes the speed of the chaser."
+            */
     };
 
     public static void handleCreateCommand(CommandSender sender, String[] args) {
@@ -117,6 +119,12 @@ public class CreateHandler {
                 map.chaserMode = DDMap.ChaserMode.CHASE_LAST;
                 Util.sendMessage(sender, "Chaser has been enabled, and will chase whoever is in last place!");
             }
+        } else if (args[1].equals("change_speed")) {
+            CreateState state = Tracker.creationStatus.get(player.getDisplayName());
+            DDMap map = state.map;
+            map.chaserSpeedEnum = map.chaserSpeedEnum.getNext();
+            map.updateChaserSpeed();
+            Util.sendMessage(sender, "Updated chaser speed to " + map.chaserSpeedEnum);
         } else if (args[1].equals("cancel")) {
             CreateState state = Tracker.creationStatus.get(player.getDisplayName());
             if (Tracker.creationStatus.remove(player.getDisplayName()) != null) {

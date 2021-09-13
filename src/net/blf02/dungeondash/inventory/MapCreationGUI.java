@@ -88,6 +88,27 @@ public class MapCreationGUI extends BaseGUI {
         changeIcon.setItemMeta(meta);
         this.replaceItem(4, changeIcon);
 
+        ItemStack chaserSpeedIcon = new ItemStack(Material.AIR);
+        if (state.map.hasChaser()) {
+            if (state.map.chaserSpeedEnum == DDMap.ChaserSpeed.SLOW) {
+                chaserSpeedIcon = new ItemStack(Material.RED_DYE);
+                meta = chaserSpeedIcon.getItemMeta();
+                meta.setDisplayName(ChatColor.GRAY + "Chaser Move Speed: " + ChatColor.RED + "Slow");
+                chaserSpeedIcon.setItemMeta(meta);
+            } else if (state.map.chaserSpeedEnum == DDMap.ChaserSpeed.MEDIUM) {
+                chaserSpeedIcon = new ItemStack(Material.YELLOW_DYE);
+                meta = chaserSpeedIcon.getItemMeta();
+                meta.setDisplayName(ChatColor.GRAY + "Chaser Move Speed: " + ChatColor.YELLOW + "Medium");
+                chaserSpeedIcon.setItemMeta(meta);
+            } else if (state.map.chaserSpeedEnum == DDMap.ChaserSpeed.FAST) {
+                chaserSpeedIcon = new ItemStack(Material.LIME_DYE);
+                meta = chaserSpeedIcon.getItemMeta();
+                meta.setDisplayName(ChatColor.GRAY + "Chaser Move Speed: " + ChatColor.GREEN + "Fast");
+                chaserSpeedIcon.setItemMeta(meta);
+            }
+        }
+        this.replaceItem(5, chaserSpeedIcon);
+
         ItemStack saveItem = new ItemStack(Material.COMMAND_BLOCK);
         meta = saveItem.getItemMeta();
         meta.setDisplayName(ChatColor.DARK_PURPLE + "Save Map");
@@ -121,6 +142,9 @@ public class MapCreationGUI extends BaseGUI {
             case 4:
                 SetIconGUI setIconGUI = new SetIconGUI(this.state, this);
                 setIconGUI.openOnPlayer(player);
+                break;
+            case 5:
+                command = "ddash create change_speed";
                 break;
             case 7:
                 command = "ddash create save";
