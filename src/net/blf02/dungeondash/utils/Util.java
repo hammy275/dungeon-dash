@@ -91,7 +91,7 @@ public class Util {
     }
 
 
-    public static ArmorStand spawnChaser(Location location) {
+    public static ArmorStand spawnChaser(Location location, String name) {
         Objects.requireNonNull(location.getWorld());
         ArmorStand armorStand = (ArmorStand) location.getWorld().spawn(location, EntityType.ARMOR_STAND.getEntityClass());
         armorStand.setInvulnerable(true);
@@ -99,6 +99,12 @@ public class Util {
         armorStand.setMarker(true);
         armorStand.setGravity(false);
         armorStand.setMarker(true);
+        armorStand.setCustomName(name);
+        armorStand.setCustomNameVisible(false);
         return armorStand;
     }
+    public static ArmorStand spawnChaser(Location location) {
+        return spawnChaser(location, "Chaser");
+    }
+
 }

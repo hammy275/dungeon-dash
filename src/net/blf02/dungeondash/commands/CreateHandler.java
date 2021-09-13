@@ -22,7 +22,6 @@ public class CreateHandler {
             "`/ddash create void_respawn` (=Bedrock=) - Enables/disables the void respawning players. Defaults to false.",
             "`/ddash create water_respawn` (=Water Bucket=) - Enables/disables water respawning players. Defaults to false.",
             "`/ddash create respawns_kill` (=Totem of Undying=) - Enables/disables respawns killing the player instead. Defaults to false.",
-            "`/ddash create use_chaser` (=Armor Stand=) - Enables/disables the chaser. If not enabled, first to finish wins! Defaults to true.",
             "`/ddash create save` (=Command Block=) - Saves the map to disk, and makes it available to players to play.",
             "`/ddash create cancel` (=Barrier in Rightmost Hotbar Slot=) - Run during any point of the creation process to cancel creation."*/
     };
@@ -105,14 +104,18 @@ public class CreateHandler {
             } else {
                 Util.sendMessage(sender, "Players now respawn normally!");
             }
-        } else if (args[1].equals("use_chaser")) {
+        } else if (args[1].equals("change_chaser")) {
             CreateState state = Tracker.creationStatus.get(player.getDisplayName());
             DDMap map = state.map;
-            map.hasChaser = !map.hasChaser;
-            if (map.hasChaser) {
-                Util.sendMessage(sender, "Players are now chased throughout the map!");
-            } else {
-                Util.sendMessage(sender, "Players are no longer chased! First to finish wins!");
+            if (map.chaserMode == DDMap.ChaserMode.CHASE_LAST) {
+                map.chaserMode = DDMap.ChaserMode.SHADOW;
+                Util.sendMessage(sender, "All players now have an individual shadow that copies their moves!");
+            } else if (map.chaserMode == DDMap.ChaserMode.SHADOW) {
+                map.chaserMode = DDMap.ChaserMode.NO_CHASER;
+                Util.sendMessage(sender, "No chaser! First to the finish, wins!");
+            } else if (map.chaserMode == DDMap.ChaserMode.NO_CHASER) {
+                map.chaserMode = DDMap.ChaserMode.CHASE_LAST;
+                Util.sendMessage(sender, "Chaser has been enabled, and will chase whoever is in last place!");
             }
         } else if (args[1].equals("cancel")) {
             CreateState state = Tracker.creationStatus.get(player.getDisplayName());

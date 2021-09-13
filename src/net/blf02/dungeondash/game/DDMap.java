@@ -1,6 +1,7 @@
 package net.blf02.dungeondash.game;
 
 import net.blf02.dungeondash.DungeonDash;
+import net.blf02.dungeondash.config.Config;
 import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;
 import org.bukkit.ChatColor;
@@ -32,7 +33,8 @@ public class DDMap implements Serializable {
     public boolean respawnsKill = false;
     public boolean voidRespawns = false;
     public boolean waterRespawns = false;
-    public boolean hasChaser = true;
+    public ChaserMode chaserMode = ChaserMode.CHASE_LAST;
+    public double chaserSpeed = Config.distanceToMoveFast;
     public String iconId = "COMPASS";
     public int mapVersion = 3;
 
@@ -54,6 +56,10 @@ public class DDMap implements Serializable {
     public boolean isFullMap() {
         return mapDisplayName != null && start != null &&
                 endCorner1 != null && endCorner2 != null;
+    }
+
+    public boolean hasChaser() {
+        return this.chaserMode != ChaserMode.NO_CHASER;
     }
 
     public boolean saveMap(@Nullable CommandSender sender) {
@@ -82,7 +88,7 @@ public class DDMap implements Serializable {
         if (itemMat == null) itemMat = Material.COMPASS;
         ItemStack toRet = new ItemStack(itemMat);
         ItemMeta meta = toRet.getItemMeta();
-        ChatColor color = this.hasChaser ? ChatColor.RED : ChatColor.BLUE;
+        ChatColor color = this.hasChaser() ? ChatColor.RED : ChatColor.BLUE;
         meta.setDisplayName(ChatColor.RESET + color.toString() + this.mapDisplayName);
         toRet.setItemMeta(meta);
         return toRet;
@@ -93,7 +99,6 @@ public class DDMap implements Serializable {
             BukkitObjectInputStream in = new BukkitObjectInputStream(
                     new GZIPInputStream(new FileInputStream(path)));
             DDMap map = (DDMap) in.readObject();
-            map.hasChaser = true;
             in.close();
             return map;
         } catch (ClassNotFoundException | IOException e) {
@@ -105,5 +110,9 @@ public class DDMap implements Serializable {
     public int hashCode() {
         // No two maps share the same name, so we're safe to use the hash from the map name.
         return this.mapDisplayName.hashCode();
+    }
+
+    public enum ChaserMode implements Serializable {
+        CHASE_LAST, SHADOW, NO_CHASER
     }
 }

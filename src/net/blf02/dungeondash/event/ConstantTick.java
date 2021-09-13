@@ -6,6 +6,7 @@ import net.blf02.dungeondash.game.CreateState;
 import net.blf02.dungeondash.game.DDMap;
 import net.blf02.dungeondash.game.Lobby;
 import net.blf02.dungeondash.game.PlayerState;
+import net.blf02.dungeondash.utils.Position;
 import net.blf02.dungeondash.utils.TaskWithAfter;
 import net.blf02.dungeondash.utils.Tracker;
 import net.blf02.dungeondash.utils.Util;
@@ -16,9 +17,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -56,7 +60,7 @@ public class ConstantTick {
                 entry.getValue().triggerVictory();
                 // If someone wins, and there's not a chaser, lose everyone else.
                 Lobby lobby = Tracker.lobbies.get(entry.getValue().map);
-                if (lobby != null && !entry.getValue().map.hasChaser) {
+                if (lobby != null && !entry.getValue().map.hasChaser()) {
                     lobby.cleanLobby();
                 }
             } else if (entry.getValue().player.getLocation().getY() < 0 && entry.getValue().map.voidRespawns) {
@@ -115,10 +119,21 @@ public class ConstantTick {
                         p.player.sendTitle(colorPrefix + secsUntilStart, null, 1, 60, 1);
                     }
                 }
-            } else if (lobby.ticksUntilStart == -100 && lobby.gameStarted && entry.getKey().hasChaser) {
-                lobby.chaser = Util.spawnChaser(entry.getKey().start);
+            } else if (lobby.ticksUntilStart == -100) {
+                if (entry.getKey().chaserMode == DDMap.ChaserMode.CHASE_LAST) {
+                    lobby.chasers.add(Util.spawnChaser(entry.getKey().start));
+                    for (PlayerState p : lobby.playerStates) {
+                        Util.sendMessage(p.player, "The chaser has entered the map! Don't get caught in the smoke as the chaser hunts down last place!!");
+                    }
+                } else if (entry.getKey().chaserMode == DDMap.ChaserMode.SHADOW) {
+                    for (PlayerState p : lobby.playerStates) {
+                        lobby.chasers.add(Util.spawnChaser(entry.getKey().start, p.player.getDisplayName()));
+                        Util.sendMessage(p.player, "The shadow-y chasers have entered the map, following everyone's exact movements. Don't get caught in the shadows' smoke!!");
+                    }
+                }
+            } else if (lobby.gameStarted && lobby.ticksUntilStart <= -100 && lobby.map.chaserMode == DDMap.ChaserMode.SHADOW) {
                 for (PlayerState p : lobby.playerStates) {
-                    Util.sendMessage(p.player, "The chaser has entered the map! Don't get caught in the smoke!");
+                    lobby.playerToPositions.get(p).add(new Position(p.player.getLocation()));
                 }
             }
         }
@@ -130,23 +145,41 @@ public class ConstantTick {
 
     public static void tickLobbyChasers() {
         for (Map.Entry<DDMap, Lobby> entry : Tracker.lobbies.entrySet()) {
-            ArmorStand chaser = entry.getValue().chaser;
-            if (chaser == null) return;
-            if (chaser.getTicksLived() % Config.ticksBetweenMove != 0) return;
-            if (chaser.getTicksLived() % 5 == 0)
-                chaser.getWorld().spawnParticle(Particle.SMOKE_NORMAL,
-                        chaser.getLocation(), 32, 0.5, 0.5, 0.5, 0.01);
-            PlayerState target = entry.getValue().positionsLastToFirst.peek();
-            if (target != null) {
-                Location destination = chaser.getLocation().setDirection(
-                        target.player.getLocation().subtract(chaser.getLocation()).toVector());
-                destination = destination.add(Config.distanceToMove * destination.getDirection().getX(),
-                        Config.distanceToMove * destination.getDirection().getY(),
-                        Config.distanceToMove * destination.getDirection().getZ());
-                chaser.teleport(destination);
-                if (chaser.getLocation().distance(target.player.getLocation()) <= 2) {
-                    target.triggerLoss();
-                    entry.getValue().resetRankings(); // Prevents targeting dead players
+            List<ArmorStand> chasers = entry.getValue().chasers;
+            double speed = entry.getKey().chaserSpeed;
+            if (chasers.size() == 0) return;
+            if (entry.getKey().chaserMode == DDMap.ChaserMode.CHASE_LAST) {
+                ArmorStand chaser = chasers.get(0);
+                if (chaser.getTicksLived() % Config.ticksBetweenMove != 0) return;
+                if (chaser.getTicksLived() % 5 == 0)
+                    chaser.getWorld().spawnParticle(Particle.SMOKE_NORMAL,
+                            chaser.getLocation(), 32, 0.5, 0.5, 0.5, 0.01);
+                PlayerState target = entry.getValue().positionsLastToFirst.peek();
+                if (target != null) {
+                    Location destination = chaser.getLocation().setDirection(
+                            target.player.getLocation().subtract(chaser.getLocation()).toVector());
+                    destination = destination.add(speed * destination.getDirection().getX(),
+                            speed * destination.getDirection().getY(),
+                            speed * destination.getDirection().getZ());
+                    chaser.teleport(destination);
+                }
+            } else if (entry.getKey().chaserMode == DDMap.ChaserMode.SHADOW) {
+                for (ArmorStand chaser : chasers) {
+
+                }
+            }
+            // Handle checking all chasers to see if they've caught someone.
+            for (ArmorStand chaser : chasers) {
+                List<Entity> nearby = chaser.getNearbyEntities(1, 1, 1);
+                for (Entity e : nearby) {
+                    if (e instanceof Player) {
+                        Player player = (Player) e;
+                        Tracker.playStatus.get(player.getDisplayName()).triggerLoss();
+                        if (entry.getKey().chaserMode == DDMap.ChaserMode.CHASE_LAST) {
+                            // Instantly start targeting a new player if using chase last mode.
+                            entry.getValue().resetRankings();
+                        }
+                    }
                 }
             }
         }

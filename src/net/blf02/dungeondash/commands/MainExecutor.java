@@ -145,7 +145,7 @@ public class MainExecutor implements CommandExecutor {
             } else {
                 Lobby lobby = Tracker.lobbies.get(map);
                 if (lobby == null) {
-                    lobby = new Lobby();
+                    lobby = new Lobby(map);
                     Tracker.lobbies.put(map, lobby);
                 } else if (lobby.gameStarted) {
                     Util.sendMessage(sender, "That map's game has already started!");

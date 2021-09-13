@@ -1,6 +1,7 @@
 package net.blf02.dungeondash.inventory;
 
 import net.blf02.dungeondash.game.CreateState;
+import net.blf02.dungeondash.game.DDMap;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -62,14 +63,20 @@ public class MapCreationGUI extends BaseGUI {
         this.replaceItem(2, respawnsKill);
 
         ItemStack hasChaser;
-        if (state.map.hasChaser) {
+        if (state.map.chaserMode == DDMap.ChaserMode.CHASE_LAST) {
             hasChaser = new ItemStack(Material.ARMOR_STAND);
             meta = hasChaser.getItemMeta();
-            meta.setDisplayName(ChatColor.GRAY + "Use a Chaser - " + ChatColor.GREEN + "Enabled");
-        } else {
+            meta.setDisplayName(ChatColor.GRAY + "Use a Chaser - " + ChatColor.GREEN + "Chase Last Place");
+        } else if (state.map.chaserMode == DDMap.ChaserMode.SHADOW) {
+            hasChaser = new ItemStack(Material.INK_SAC);
+            meta = hasChaser.getItemMeta();
+            meta.setDisplayName(ChatColor.GRAY + "Use a Chaser - " + ChatColor.DARK_GRAY + "Shadow Chases All Players");
+        } else if (state.map.chaserMode == DDMap.ChaserMode.NO_CHASER) {
             hasChaser = new ItemStack(Material.BARRIER);
             meta = hasChaser.getItemMeta();
             meta.setDisplayName(ChatColor.GRAY + "Use a Chaser - " + ChatColor.RED + "Disabled");
+        } else {
+            throw new IllegalArgumentException("Map has unimplemented chaser mode!");
         }
         hasChaser.setItemMeta(meta);
         this.replaceItem(3, hasChaser);
@@ -109,7 +116,7 @@ public class MapCreationGUI extends BaseGUI {
                 command = "ddash create respawns_kill";
                 break;
             case 3:
-                command = "ddash create use_chaser";
+                command = "ddash create change_chaser";
                 break;
             case 4:
                 SetIconGUI setIconGUI = new SetIconGUI(this.state, this);
