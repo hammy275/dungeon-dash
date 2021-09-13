@@ -13,7 +13,6 @@ import net.blf02.dungeondash.utils.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -104,6 +103,7 @@ public class ConstantTick {
                     Util.sendMessage(p.player, "Let the games begin!");
                     p.player.sendTitle(ChatColor.GREEN + "Go!", null, 5, 20, 5);
                     p.startTime = LocalDateTime.now();
+                    p.player.getInventory().clear();
                 }
             } else if (lobby.ticksUntilStart % 20 == 0 && !lobby.gameStarted) {
                 int secsUntilStart = lobby.ticksUntilStart / 20;

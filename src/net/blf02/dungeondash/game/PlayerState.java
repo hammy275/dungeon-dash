@@ -6,7 +6,10 @@ import net.blf02.dungeondash.utils.Util;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.scoreboard.DisplaySlot;
 import org.bukkit.scoreboard.Objective;
@@ -53,6 +56,12 @@ public class PlayerState implements Comparable<PlayerState> {
         for (PotionEffect p : player.getActivePotionEffects()) {
             player.removePotionEffect(p.getType());
         }
+
+        ItemStack leaveItem = new ItemStack(Material.CLOCK);
+        ItemMeta meta = leaveItem.getItemMeta();
+        meta.setDisplayName(ChatColor.AQUA + "Leave Lobby");
+        leaveItem.setItemMeta(meta);
+        player.getInventory().setItem(8, leaveItem);
     }
 
     public void doRespawn(Player player, boolean forceRespawn) {

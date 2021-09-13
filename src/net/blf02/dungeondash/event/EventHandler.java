@@ -1,5 +1,6 @@
 package net.blf02.dungeondash.event;
 
+import net.blf02.dungeondash.DungeonDash;
 import net.blf02.dungeondash.game.CreateState;
 import net.blf02.dungeondash.game.PlayerState;
 import net.blf02.dungeondash.inventory.BaseGUI;
@@ -76,26 +77,33 @@ public class EventHandler implements Listener {
     public void onRightClick(PlayerInteractEvent event) {
         Material item = event.getPlayer().getInventory().getItemInMainHand().getType();
         ItemMeta meta = event.getPlayer().getInventory().getItemInMainHand().getItemMeta();
-        CreateState state = Tracker.creationStatus.get(event.getPlayer().getDisplayName());
-        if (state == null) {
-            return;
+        CreateState createState = Tracker.creationStatus.get(event.getPlayer().getDisplayName());
+        if (createState != null) {
+            boolean doInventoryUpdate = true;
+            String command;
+            if (item == Material.LIME_DYE) {
+                command = "ddash create spawn";
+                doInventoryUpdate = false;
+            } else if (item == Material.RED_DYE) {
+                command = "ddash create end" + createState.currentCornerItem;
+            } else if (item == Material.COMMAND_BLOCK) {
+                command = "ddash create settings";
+            } else {
+                return;
+            }
+            Bukkit.getServer().dispatchCommand(event.getPlayer(), command);
+            if (doInventoryUpdate) {
+                createState.updateInventory();
+            }
         }
-        boolean doInventoryUpdate = true;
-        String command;
-        if (item == Material.LIME_DYE) {
-            command = "ddash create spawn";
-            doInventoryUpdate = false;
-        } else if (item == Material.RED_DYE) {
-            command = "ddash create end" + state.currentCornerItem;
-        } else if (item == Material.COMMAND_BLOCK) {
-            command = "ddash create settings";
-        } else {
-            return;
+        PlayerState playerState = Tracker.playStatus.get(event.getPlayer().getDisplayName());
+        if (playerState != null && playerState.inLobby) {
+            if (item == Material.CLOCK) {
+                Bukkit.getScheduler().runTask(DungeonDash.instance, () ->
+                        Bukkit.getServer().dispatchCommand(event.getPlayer(), "ddash leave"));
+            }
         }
-        Bukkit.getServer().dispatchCommand(event.getPlayer(), command);
-        if (doInventoryUpdate) {
-            state.updateInventory();
-        }
+
     }
 
     @org.bukkit.event.EventHandler
