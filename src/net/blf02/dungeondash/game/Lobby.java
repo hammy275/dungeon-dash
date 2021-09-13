@@ -2,6 +2,7 @@ package net.blf02.dungeondash.game;
 
 import net.blf02.dungeondash.config.Config;
 import net.blf02.dungeondash.utils.Position;
+import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 
 import java.util.ArrayList;
@@ -25,6 +26,26 @@ public class Lobby {
 
     public Lobby(DDMap map) {
         this.map = map;
+    }
+
+    public void addPositionForPlayer(PlayerState playerState, Position position) {
+        LinkedList<Position> positions = playerToPositions.get(playerState);
+        if (positions == null) {
+            positions = new LinkedList<>();
+            playerToPositions.put(playerState, positions);
+        }
+        positions.offer(position);
+    }
+
+    public Location getNextPositionForChaser(PlayerState playerState, Location currentPosition) {
+        Position toReturn = playerToPositions.get(playerState).remove();
+        // Constantly loop forward until the player isn't standing still anymore.
+        // This function can eventually be expanded to cover more edge cases that the shadow should skip.
+        while (toReturn.getX() == currentPosition.getX() && toReturn.getY() == currentPosition.getY()
+        && toReturn.getZ() == currentPosition.getZ()) {
+            toReturn = playerToPositions.get(playerState).remove();
+        }
+        return toReturn.asLocation(playerState.player.getWorld());
     }
 
     public void cleanLobby() {

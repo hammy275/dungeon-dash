@@ -13,6 +13,7 @@ import net.blf02.dungeondash.utils.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Color;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
@@ -25,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class ConstantTick {
 
@@ -131,9 +133,9 @@ public class ConstantTick {
                         Util.sendMessage(p.player, "The shadow-y chasers have entered the map, following everyone's exact movements. Don't get caught in the shadows' smoke!!");
                     }
                 }
-            } else if (lobby.gameStarted && lobby.ticksUntilStart <= -100 && lobby.map.chaserMode == DDMap.ChaserMode.SHADOW) {
+            } else if (lobby.gameStarted && lobby.map.chaserMode == DDMap.ChaserMode.SHADOW) {
                 for (PlayerState p : lobby.playerStates) {
-                    lobby.playerToPositions.get(p).add(new Position(p.player.getLocation()));
+                    lobby.addPositionForPlayer(p, new Position(p.player.getLocation()));
                 }
             }
         }
@@ -148,12 +150,14 @@ public class ConstantTick {
             List<ArmorStand> chasers = entry.getValue().chasers;
             double speed = entry.getKey().chaserSpeed;
             if (chasers.size() == 0) return;
-            if (entry.getKey().chaserMode == DDMap.ChaserMode.CHASE_LAST) {
-                ArmorStand chaser = chasers.get(0);
-                if (chaser.getTicksLived() % Config.ticksBetweenMove != 0) return;
+            for (ArmorStand chaser : chasers) {
                 if (chaser.getTicksLived() % 5 == 0)
                     chaser.getWorld().spawnParticle(Particle.SMOKE_NORMAL,
                             chaser.getLocation(), 32, 0.5, 0.5, 0.5, 0.01);
+            }
+            if (entry.getKey().chaserMode == DDMap.ChaserMode.CHASE_LAST) {
+                ArmorStand chaser = chasers.get(0);
+                if (chaser.getTicksLived() % Config.ticksBetweenMove != 0) return;
                 PlayerState target = entry.getValue().positionsLastToFirst.peek();
                 if (target != null) {
                     Location destination = chaser.getLocation().setDirection(
@@ -165,9 +169,9 @@ public class ConstantTick {
                 }
             } else if (entry.getKey().chaserMode == DDMap.ChaserMode.SHADOW) {
                 for (ArmorStand chaser : chasers) {
-                    if (chaser.getTicksLived() / speed % 1 != 0) { // Move speed% of the time.
+                    if (ThreadLocalRandom.current().nextDouble() < speed) {
                         PlayerState chased = Tracker.playStatus.get(chaser.getCustomName());
-                        chaser.teleport(entry.getValue().playerToPositions.get(chased).remove().asLocation(chaser.getWorld()));
+                        chaser.teleport(entry.getValue().getNextPositionForChaser(chased, chaser.getLocation()));
                     }
 
                 }
