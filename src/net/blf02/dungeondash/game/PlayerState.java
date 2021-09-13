@@ -117,6 +117,7 @@ public class PlayerState implements Comparable<PlayerState> {
 
     public void triggerVictory() {
         if (inLobby) {
+            this.respawnPoint = this.map.start;
             this.doRespawn(player, true);
         } else {
             String timestamp = getTimestampSinceStart(true);

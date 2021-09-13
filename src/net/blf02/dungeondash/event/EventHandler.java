@@ -45,17 +45,6 @@ public class EventHandler implements Listener {
     }
 
     @org.bukkit.event.EventHandler
-    public void onInteraction(PlayerInteractEvent event) {
-        if (event.getAction() == Action.PHYSICAL) {
-            PlayerState state = Tracker.playStatus.get(event.getPlayer().getDisplayName());
-            if (state != null && state.player.getWorld().getBlockAt(state.player.getLocation().add(0, -1, 0)).isEmpty()) return;
-            if (state != null) {
-                state.respawnPoint = event.getPlayer().getLocation();
-            }
-        }
-    }
-
-    @org.bukkit.event.EventHandler
     public void onLeave(PlayerQuitEvent event) {
         // When DC'ing, make sure to remove player's status
         PlayerState state = Tracker.playStatus.get(event.getPlayer().getDisplayName());
@@ -75,6 +64,7 @@ public class EventHandler implements Listener {
 
     @org.bukkit.event.EventHandler
     public void onRightClick(PlayerInteractEvent event) {
+        if (event.getAction() != Action.RIGHT_CLICK_AIR && event.getAction() != Action.RIGHT_CLICK_BLOCK) return;
         Material item = event.getPlayer().getInventory().getItemInMainHand().getType();
         ItemMeta meta = event.getPlayer().getInventory().getItemInMainHand().getItemMeta();
         CreateState createState = Tracker.creationStatus.get(event.getPlayer().getDisplayName());

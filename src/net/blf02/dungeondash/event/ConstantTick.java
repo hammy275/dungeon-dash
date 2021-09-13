@@ -70,6 +70,12 @@ public class ConstantTick {
                     && entry.getValue().map.waterRespawns) {
                 entry.getValue().attemptRespawn(entry.getValue().player);
             }
+
+            if (entry.getValue().player.getLocation().getWorld() != null &&
+                    entry.getValue().player.getLocation().getWorld()
+                            .getBlockAt(entry.getValue().player.getLocation()).getType() == Material.LIGHT_WEIGHTED_PRESSURE_PLATE) {
+                entry.getValue().respawnPoint = entry.getValue().player.getLocation();
+            }
         }
         for (String s : Tracker.playStatusesToRemove) {
             Tracker.playStatus.remove(s);
@@ -104,6 +110,7 @@ public class ConstantTick {
                     p.player.sendTitle(ChatColor.GREEN + "Go!", null, 5, 20, 5);
                     p.startTime = LocalDateTime.now();
                     p.player.getInventory().clear();
+                    p.respawnPoint = p.map.start;
                 }
             } else if (lobby.ticksUntilStart % 20 == 0 && !lobby.gameStarted) {
                 int secsUntilStart = lobby.ticksUntilStart / 20;
