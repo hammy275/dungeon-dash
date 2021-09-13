@@ -25,26 +25,22 @@ public class DDMap implements Serializable {
     private static final transient long serialVersionUID = 1791518827905011055L;
 
     public final String mapDisplayName;
-    public final Location start;
-    public final Location endCorner1;
-    public final Location endCorner2;
+    public Location start;
+    public Location endCorner1;
+    public Location endCorner2;
 
     public boolean respawnsKill = false;
     public boolean voidRespawns = false;
     public boolean waterRespawns = false;
     public boolean hasChaser = true;
     public String iconId = "COMPASS";
-    public int mapVersion = 2;
-
-    public transient boolean isFullMap;
+    public int mapVersion = 3;
 
     public DDMap(String mapDisplayName, Location start, Location end1, Location end2) {
         this.mapDisplayName = mapDisplayName;
         this.start = start;
         this.endCorner1 = end1;
         this.endCorner2 = end2;
-        this.isFullMap = mapDisplayName != null && start != null &&
-                end1 != null && end2 != null;
     }
 
     public Location getCenterOfEnd() {
@@ -53,6 +49,11 @@ public class DDMap implements Serializable {
                 (Math.abs(this.endCorner1.getY()) + Math.abs(this.endCorner2.getY())) / 2.0,
                 (Math.abs(this.endCorner1.getZ()) + Math.abs(this.endCorner2.getZ())) / 2.0,
                 0, 0);
+    }
+
+    public boolean isFullMap() {
+        return mapDisplayName != null && start != null &&
+                endCorner1 != null && endCorner2 != null;
     }
 
     public boolean saveMap(@Nullable CommandSender sender) {

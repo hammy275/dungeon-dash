@@ -47,22 +47,22 @@ public class CreateHandler {
             }
         } else if (args[1].equals("spawn")) {
             CreateState old = Tracker.creationStatus.get(player.getDisplayName());
-            old.map = new DDMap(old.map.mapDisplayName, player.getLocation(), old.map.endCorner1, old.map.endCorner2);
+            old.map.start = player.getLocation();
             Util.sendMessage(sender, "Set start position of map! Type `/ddash create end1` or use the =Red Dye= to set the first corner of the ending zone!");
         } else if (args[1].equals("end1")) {
             CreateState old = Tracker.creationStatus.get(player.getDisplayName());
-            old.map = new DDMap(old.map.mapDisplayName, old.map.start, player.getLocation(), old.map.endCorner2);
+            old.map.endCorner1 = player.getLocation();
             old.currentCornerItem = 2;
             Util.sendMessage(sender, "Set first corner of end! Type `/ddash create end2` or use the =Red Dye= to set the other corner of the ending zone!");
         } else if (args[1].equals("end2")) {
             CreateState old = Tracker.creationStatus.get(player.getDisplayName());
-            old.map = new DDMap(old.map.mapDisplayName, old.map.start, old.map.endCorner1, player.getLocation());
+            old.map.endCorner2 = player.getLocation();
             old.currentCornerItem = 1;
             Util.sendMessage(sender, "Set second corner of the map successfully! Use `/ddash create help` to see what other commands and items you can run, or scroll around your hotbar!");
         } else if (args[1].equals("save")) {
             CreateState state = Tracker.creationStatus.get(player.getDisplayName());
             DDMap map = state.map;
-            if (!map.isFullMap) {
+            if (!map.isFullMap()) {
                 Util.sendMessage(sender, "Error: Map is missing needed properties! Make sure you've set the `spawn` and both `end corners`!");
                 return;
             }

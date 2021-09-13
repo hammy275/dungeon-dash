@@ -91,7 +91,6 @@ public class MainExecutor implements CommandExecutor {
             for (DDMap map : Tracker.maps) {
                 if (map.mapDisplayName.equals(mapName)) {
                     Tracker.creationStatus.put(player.getDisplayName(), new CreateState(player, map, map));
-                    map.isFullMap = true;
                     Util.sendMessage(player, "Editing map =" + map.mapDisplayName + "=.");
                     return;
                 }
